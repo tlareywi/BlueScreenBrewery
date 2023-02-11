@@ -1,5 +1,5 @@
 # Introduction
-A sophisticaed system for brewery automation built around Node-Red and MQTT. Node-Red is a widely adopted low-code programming environment used
+A sophisticated system for brewery automation built around Node-Red and MQTT. Node-Red is a widely adopted low-code programming environment used
 in production automation systems and well suited for brewery automation. MQTT is an IoT (Internet of Things) communication protocol built on 
 TCP. Blue Screen Brewery (BSB) leverages both these technologies to integrate sensors and devices found in the brewery along with external
 software services in a single integrated user interface. Some examples of elements that are possible to integrate with
