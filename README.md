@@ -19,7 +19,7 @@ not necessarily, installed on the same machine. For convinience, a pre-configure
 and MQTT installtion. Node-Red communicates with any number of Arduino boards (ESP32) via MQTT to controll attached devices, read from sensors, etc. The firmware is
 common between all Arduino devices and configured dynamically via messages from Node-Red. More on this in the details below. (TODO)
 
-![BSB Arch](screen_captures/BlueScreenBrewery.gif)
+![BSB Arch](screen_captures/BlueScreenBrewery.png)
 
 ### User Interface
 A browser based UI is generated via use of Node-Red Deshboard nodes within the flow. Create a layout and UI elements specific to your brewery needs. An example of
