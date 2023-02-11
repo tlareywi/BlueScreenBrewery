@@ -102,16 +102,14 @@ def initTopicMappings( jdata ):
             publishers[obj['Topic']] = lambda : random.randint(50, 220)
         elif( obj['Type'] == 'Digital-In' ):
             print('Publishing to Digital-In',  obj['Topic'], 'from GPIO',  obj['GPIO'] )
-            publishers[obj['Topic']] = lambda : 0
+            publishers[obj['Topic']] = lambda : random.randint(0, 1)
         elif( obj['Type'] == 'Digital-Out' ):
             print('Subscribing to Digital-Out',  obj['Topic'], 'to GPIO',  obj['GPIO'] )
             subscriptions[obj['Topic']] = 0
             subscribe(gClient, obj['Topic'])
         elif( obj['Type'] == 'Tilt' ):
             print('Publishing Tilt',  obj['Topic'], 'from sensor index',  obj['Index'] )
-            grav = 1.0 + (random.randint(10, 100) / 1000.0)
-            temp = random.randint(40, 90)
-            publishers[obj['Topic']] = lambda : '{"Temp:"' + f'{temp:.1f}' + ',"Grav:"' + f'{grav:.3f}' + '}'
+            publishers[obj['Topic']] = lambda : '{"Temp:"' + f'{random.randint(40, 90):.1f}' + ',"Grav:"' + f'{1.0 + (random.randint(10, 100) / 1000.0):.3f}' + '}'
         else:
             print( 'Unknown configuration object type ', obj )
 
