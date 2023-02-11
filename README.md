@@ -19,6 +19,16 @@ not necessarily, installed on the same machine. For convinience, a pre-configure
 and MQTT installtion. Node-Red communicates with any number of Arduino boards (ESP32) via MQTT to controll attached devices, read from sensors, etc. The firmware is
 common between all Arduino devices and configured dynamically via messages from Node-Red. More on this in the details below. (TODO)
 
+### Building the BSB Firmware
+The firmware has only been tested on an ESP32 board and the 'helper' script referenced below assumes such a device.
+
+* Download arduino-cli from https://arduino.github.io/arduino-cli/0.20/installation/
+* On the command line, navigate to Firmware_ESP32 and copy arduino-cli here
+* Edit Firmware_ESP32/Config.h to configure your device's name, WiFi parameters and SSL/TLS certs if applicable.
+* Run `arduino-cli board list` with the board plugged in and unplugged to determine the port.
+* On Windows, edit build.bat to set the port and then run built.bat from within Firmware_ESP32
+* For other operating systems, use build.bat as a reference for what commands to run.  
+
 ![BSB Arch](screen_captures/arch.png)
 
 
