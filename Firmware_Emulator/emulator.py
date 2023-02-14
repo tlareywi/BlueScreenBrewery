@@ -92,7 +92,10 @@ publishers = {}
 def initTopicMappings( jdata ):
     global gClient
     data = json.loads(jdata)
-    for obj in data:
+    if( list(data.keys())[0] != clientName ):
+        return;
+
+    for obj in data[list(data.keys())[0]]:
         if( obj['Type'] == 'PWM' ):
             print('Subscribing to PWM',  obj['Topic'], 'to GPIO',  obj['GPIO'] )
             subscriptions[obj['Topic']] = 0

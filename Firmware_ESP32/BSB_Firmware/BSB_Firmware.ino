@@ -40,19 +40,20 @@ WiFiClient client;
 #include <ArduinoJson.h>      // JSON Parser
 #include <MQTTPubSubClient.h> // https://github.com/hideakitai/MQTTPubSubClient
 
+// Globals //////////////////////////////////////////////////////////////////////////////////
+const char consoleTopic[] = PSTR("BSB/Console");
+String deviceId( DEVICE_NAME );
+arduino::mqtt::PubSubClient<MAX_PAYLOAD_SIZE> mqtt;
+/////////////////////////////////////////////////////////////////////////////////////////////
+
 #include "OnewireSensor.h"    // OneWire temperature sensor support (optional see Config.h)
 #include "BluetoothSensor.h"  // Blutooth - for Tilt devices        (optional see Config.h)
 
 // File scope ///////////////////////////////////////////////////////////////////////////////
 static std::function<void()> publishTopics[MAX_PUBLISH_TOPICS];
 static unsigned short numPublishTopics = 0;
-static arduino::mqtt::PubSubClient<MAX_PAYLOAD_SIZE> mqtt;
 static unsigned short numPWMChannels = 0;
 static const int MaxPWMDutyCycke = (int)(pow(2, PWM_RESOLUTION) - 1);
-/////////////////////////////////////////////////////////////////////////////////////////////
-
-// Globals //////////////////////////////////////////////////////////////////////////////////
-const char consoleTopic[] = PSTR("BSB/Console");
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 //
@@ -100,11 +101,18 @@ void initTopicMappings( const String& payload ) {
   DeserializationError err = deserializeJson(doc, payload);
 
   if ( err != DeserializationError::Ok ) {
-    mqtt.publish( consoleTopic, PSTR("Failed to parse configuration. Check JSON.") );
+    mqtt.publish( consoleTopic, deviceId + PSTR(": Failed to parse configuration. Check JSON.") );
     return;
   }
 
-  JsonArray arr = doc.as<JsonArray>();
+  JsonObject::iterator itr = doc.as<JsonObject>().begin();
+  if( deviceId != itr->key().c_str() ) {
+    return;
+  }
+
+  mqtt.publish( consoleTopic, deviceId + PSTR(": Received new configuration.") );
+
+  JsonArray arr = itr->value().as<JsonArray>();
   numPublishTopics = 0;
   numPWMChannels = 0;
 
@@ -113,20 +121,20 @@ void initTopicMappings( const String& payload ) {
     String topic = mapping[PSTR("Topic")];
 
     if ( numPublishTopics == MAX_PUBLISH_TOPICS ) {
-      mqtt.publish( consoleTopic, PSTR("Exceeded max number of topics in configuration!") );
+      mqtt.publish( consoleTopic, deviceId + PSTR(": Exceeded max number of topics in configuration!") );
       break;
     }
 
     if ( type == PSTR("Digital-Out") ) {
       unsigned int GPIO = mapping[PSTR("GPIO")];
       pinMode(GPIO, OUTPUT);
-      digitalWrite(GPIO, LOW);
+      digitalWrite(GPIO, HIGH);
       
       mqtt.subscribe(topic, [GPIO](const String & payload, const size_t size) {
         if ( payload.toInt() )
-          digitalWrite(GPIO, HIGH);
-        else
           digitalWrite(GPIO, LOW);
+        else 
+          digitalWrite(GPIO, HIGH);
       });
     }
     else if ( type == PSTR("PWM") ) {
@@ -181,7 +189,7 @@ void initTopicMappings( const String& payload ) {
           ++counter;
         
         lastVal = current;
-        
+
         if ( millis() - clk > 999 ) {
           mqtt.publish(topic, String(counter));
           clk = millis();
@@ -216,7 +224,7 @@ void initTopicMappings( const String& payload ) {
           if ( lastValue != val ) {
             String json("{\"Temp\":");
             json += String( temp );
-            json += String(",\"Grav:\":");
+            json += String(",\"Grav\":");
             json += String( grav, 3 );
             json += String( "}" );
             mqtt.publish(topic, json);
@@ -227,7 +235,7 @@ void initTopicMappings( const String& payload ) {
     }
     else {
       publishTopics[numPublishTopics++] = [](){};
-      mqtt.publish( consoleTopic, String(PSTR("Unknown 'type', ")) + type + PSTR("in configuration.") );
+      mqtt.publish( consoleTopic, deviceId + PSTR(": Unknown 'type', ") + type + PSTR(" in configuration.") );
     }
   }
 }
@@ -254,6 +262,8 @@ void setup() {
 #endif
 
   connectClient();
+
+  OnewireBegin();
 
   mqtt.subscribe(PSTR("BSB/Configure"), [](const String & payload, const size_t size) {
     initTopicMappings(payload);

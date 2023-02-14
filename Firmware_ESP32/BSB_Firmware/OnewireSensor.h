@@ -21,13 +21,8 @@ OneWire oneWire(ONE_WIRE_GPIO);
 DallasTemperature sensors(&oneWire);
 
 float OnewireSensorByIndex( unsigned short indx ) {
-    DeviceAddress deviceAddr;
-    if( sensors.getAddress( deviceAddr, indx ) ) {
-        float tempF = DallasTemperature::toFahrenheit( sensors.getTempC(deviceAddr) );
-        return roundf(tempF * 100) / 100.0f; // Round to 2 decimal places.
-    }
-
-    return 0.0f;    
+    float tempF = sensors.getTempFByIndex(indx);
+    return roundf(tempF * 100) / 100.0f; // Round to 2 decimal places.
 }
 
 void OnewirePoll() {
@@ -35,7 +30,8 @@ void OnewirePoll() {
 }
 
 void OnewireBegin() {
-    sensors.begin();   
+    sensors.begin();
+    mqtt.publish( consoleTopic, deviceId + PSTR(": Initializing Onewire, sensors detected ") + String(sensors.getDeviceCount()) );
 }
 
 #else
