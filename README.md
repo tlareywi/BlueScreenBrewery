@@ -11,6 +11,7 @@ the 'out-of-the-box' firmware are;
 * DC heating elements
 * Tilt sensors
 * Onewire temperature sensors
+* Atlas Scientific EZO sensors (pH and DO2)
 * BrewFather via 3rd party contributor to Node-Red
 
 ### Architecture

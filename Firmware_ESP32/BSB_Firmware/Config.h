@@ -43,6 +43,9 @@
 // Comment line below to disable bluetooth (i.e. Tilt Hydrometer integration)
 #define ENABLE_TILT_SENSORS
 
+// Comment line below to disable Atlas sensor integration (pH, Dissolved O2) 
+#define MAX_ATLAS_SENSORS 6
+
 // Comment line below to disable SSL/TLS. Only consider this for testing/prototyping.
 #define USE_SECURE_TCP
 

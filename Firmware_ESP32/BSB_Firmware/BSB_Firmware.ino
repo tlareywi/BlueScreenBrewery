@@ -48,6 +48,7 @@ arduino::mqtt::PubSubClient<MAX_PAYLOAD_SIZE> mqtt;
 
 #include "OnewireSensor.h"    // OneWire temperature sensor support (optional see Config.h)
 #include "BluetoothSensor.h"  // Blutooth - for Tilt devices        (optional see Config.h)
+#include "AtlasSensor.h"
 
 // File scope ///////////////////////////////////////////////////////////////////////////////
 static std::function<void()> publishTopics[MAX_PUBLISH_TOPICS];
@@ -207,6 +208,20 @@ void initTopicMappings( const String& payload ) {
           mqtt.publish(topic, String(temp));
           lastValue = temp;
         }
+      };
+    }
+    else if ( type == PSTR("Atlas") ) {
+      unsigned short id = mapping[PSTR("Index")];
+      unsigned short rx = mapping[PSTR("Rx")];
+      unsigned short tx = mapping[PSTR("Tx")];
+      String calTopic = mapping[PSTR("Calibration")];
+      String tempTopic = mapping[PSTR("Compensation")];
+      
+      publishTopics[numPublishTopics++] = [id, topic, calTopic, tempTopic, rx, tx]() {
+        static AtlasSensor sensor( id, rx, tx, calTopic, tempTopic );
+        String data;
+        if ( sensor.atlasPoll( data ) )
+          mqtt.publish(topic, data);
       };
     }
     else if ( type == PSTR("Tilt") ) {
