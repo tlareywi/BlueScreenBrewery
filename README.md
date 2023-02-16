@@ -99,5 +99,27 @@ Configure message. The target device reads the configuration and begins listenin
 
 ![BSB Config](screen_captures/configuration.png)
 
-### Configuration JSON details
-TODO
+### Configuration JSON details (work in progress)
+#### Topic (required)
+A unique string that defines the MQTT message bound to the device or sensor.
+
+#### Type (required)
+* Digital-In  - Reads a binary value, 0 or 1, from the pin given in the GPIO field. The message is broadcast whenever the value changes.
+* Digital-Out - Writes a binary value, 0 or 1, to the pin given in the GPIO field. Used to control on/off devices such as some types of pumps and heaters. Node-Red flows can modulate this state over time to implement a 'Duty Cycle' to control devices such as AC heaters attached to solid state relays.
+* PWM         - Pulse width modulation. A digital signal pulsed at a high frequency. Can be used to vary power directly to low voltage devices; e.g . dim an LED, or vary a higher voltage analog signal with some additional hardware. A common application is to vary the flow rate of DC pumps. Valid values are 0-255 assuming default resolution. Advanced users can change the frequency and resolution in Config.h as desired. The GPIO field is required.
+* Analog-In   - Performs an analog value read from the associated GPIO pin. The message is broadcast whenever the value changes. 
+* Counter     - Publishes 'pulses per second' from the associated GPIO pin. This message is broadcast every second regardless of value change. A common application is integration of digital flow meters.
+* Onewire     - DS18B20 (Dallas Semiconductor) temperature sensor. The Index field is required and represents the index of the sensor on the Onewire bus. The message is broadcast upon a value change.
+* Atlas       - Integrates an Atlas Scientific sensor via their EZO embedded board on the associated Rx and Tx pins. The Command field defined a topic for the Atlas device to listen on. This is is useful for sending arbitrary commands to the device such as calibration or temperatre compensation commands. 
+* Tilt        - Integrates temperature and Sp.Gr. readings from a Tilt sensor. The Index field maps to the Tilt color as defined below.
+
+| Index | Color         |
+| ----- | -------------:|
+| 0     | Red           |
+| 1     | Greed         |
+| 2     | Black         |
+| 3     | Purple        |
+| 4     | Orange        |
+| 5     | Blue          |
+| 6     | Yellow        |
+| 7     | Pink          |
