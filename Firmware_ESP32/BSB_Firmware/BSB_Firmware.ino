@@ -211,14 +211,12 @@ void initTopicMappings( const String& payload ) {
       };
     }
     else if ( type == PSTR("Atlas") ) {
-      unsigned short id = mapping[PSTR("Index")];
       unsigned short rx = mapping[PSTR("Rx")];
       unsigned short tx = mapping[PSTR("Tx")];
-      String calTopic = mapping[PSTR("Calibration")];
-      String tempTopic = mapping[PSTR("Compensation")];
+      String commandTopic = mapping[PSTR("Command")];
       
-      publishTopics[numPublishTopics++] = [id, topic, calTopic, tempTopic, rx, tx]() {
-        static AtlasSensor sensor( id, rx, tx, calTopic, tempTopic );
+      publishTopics[numPublishTopics++] = [topic, commandTopic, rx, tx]() {
+        static AtlasSensor sensor( rx, tx, commandTopic );
         String data;
         if ( sensor.atlasPoll( data ) )
           mqtt.publish(topic, data);

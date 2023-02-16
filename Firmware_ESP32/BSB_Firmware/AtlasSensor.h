@@ -18,24 +18,17 @@
 
 class AtlasSensor : public SoftwareSerial {
 public:
-    AtlasSensor( unsigned short id, unsigned short rx, unsigned short tx, const String& cal, const String& temp ) : SoftwareSerial( rx, tx ) {
-        atlasId = id;
+    AtlasSensor( unsigned short rx, unsigned short tx, const String& cmd ) : SoftwareSerial( rx, tx ) {
         begin(9600);
         if( !isListening() ) {
             mqtt.publish( consoleTopic, deviceId + PSTR(": Failed to initialize soft-serial on defined ports, check config.") );
             return;
         } 
 
-        if( cal.length() > 0 ) {
-            mqtt.subscribe( cal, [this](const String & payload, const size_t size) {
+        if( cmd.length() > 0 ) {
+            mqtt.subscribe( cmd, [this](const String & payload, const size_t size) {
                 if( payload )
                     print( payload + '\r' ); 
-            });
-        }
-
-        if( temp.length() > 0 ) {
-            mqtt.subscribe( temp, [this](const String & payload, const size_t size) {
-                SetTempCompensation( payload.toFloat() );
             });
         }
     }
@@ -53,24 +46,13 @@ public:
 
         return false;
     }
-
-private:
-    unsigned short atlasId;   
-
-    void SetTempCompensation( float tempC ) {
-        char tempBuf[7];
-        dtostrf( tempC, 0, 2, tempBuf ); 
-        print( PSTR("T,") );
-        print( tempBuf );           
-        print( PSTR('\r') ); 
-    }  
 };
 
 #else
 
 class AtlasSensor {
 public:
-    void initAtlasDevice( unsigned short id, unsigned short rx, unsigned short tx ) {}
+    void initAtlasDevice( unsigned short rx, unsigned short tx, const String& cmd ) {}
     void atlasPoll() {}
 };
 

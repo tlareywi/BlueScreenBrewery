@@ -56,6 +56,7 @@
         "type": "ui_tab",
         "name": "Hot Side",
         "icon": "dashboard",
+        "order": 1,
         "disabled": false,
         "hidden": false
     },
@@ -139,7 +140,7 @@
             }
         },
         "site": {
-            "name": "Node-RED Dashboard",
+            "name": "Blue Screen Brewery",
             "hideToolbar": "false",
             "allowSwipe": "false",
             "lockMenu": "false",
@@ -173,6 +174,7 @@
         "type": "ui_tab",
         "name": "Cold Side",
         "icon": "dashboard",
+        "order": 2,
         "disabled": false,
         "hidden": false
     },
@@ -277,6 +279,7 @@
         "type": "ui_tab",
         "name": "Interfaces",
         "icon": "dashboard",
+        "order": 3,
         "disabled": false,
         "hidden": false
     },
@@ -287,31 +290,9 @@
         "tab": "07536b665f984120",
         "order": 1,
         "disp": true,
-        "width": "15",
+        "width": 7,
         "collapse": false,
         "className": ""
-    },
-    {
-        "id": "1636504e30239d85",
-        "type": "mqtt in",
-        "z": "6e9efb6131d41da6",
-        "name": "",
-        "topic": "Mash-pH",
-        "qos": "2",
-        "datatype": "auto-detect",
-        "broker": "f63735ef39c7ebd8",
-        "nl": false,
-        "rap": true,
-        "rh": 0,
-        "inputs": 0,
-        "x": 1200,
-        "y": 1260,
-        "wires": [
-            [
-                "c46823b579f45a8c",
-                "cb496618431c5ab7"
-            ]
-        ]
     },
     {
         "id": "cb496618431c5ab7",
@@ -326,8 +307,8 @@
         "format": "{{msg.payload}}",
         "layout": "row-left",
         "className": "",
-        "x": 1340,
-        "y": 1220,
+        "x": 940,
+        "y": 580,
         "wires": []
     },
     {
@@ -355,7 +336,7 @@
         "diff": false,
         "className": "",
         "x": 250,
-        "y": 620,
+        "y": 540,
         "wires": []
     },
     {
@@ -383,7 +364,7 @@
         "diff": false,
         "className": "",
         "x": 250,
-        "y": 420,
+        "y": 340,
         "wires": []
     },
     {
@@ -411,7 +392,7 @@
         "diff": false,
         "className": "",
         "x": 250,
-        "y": 520,
+        "y": 440,
         "wires": []
     },
     {
@@ -653,7 +634,7 @@
         "rh": 0,
         "inputs": 0,
         "x": 100,
-        "y": 660,
+        "y": 580,
         "wires": [
             [
                 "f83d3188c399cd40",
@@ -676,7 +657,7 @@
         "rh": 0,
         "inputs": 0,
         "x": 100,
-        "y": 460,
+        "y": 380,
         "wires": [
             [
                 "c027e73d557e39ca",
@@ -698,7 +679,7 @@
         "rh": 0,
         "inputs": 0,
         "x": 100,
-        "y": 560,
+        "y": 480,
         "wires": [
             [
                 "f53df7db3dbe6548",
@@ -726,7 +707,7 @@
         "to": "",
         "reg": false,
         "x": 310,
-        "y": 660,
+        "y": 580,
         "wires": [
             []
         ]
@@ -751,7 +732,7 @@
         "to": "",
         "reg": false,
         "x": 300,
-        "y": 460,
+        "y": 380,
         "wires": [
             []
         ]
@@ -776,32 +757,7 @@
         "to": "",
         "reg": false,
         "x": 300,
-        "y": 560,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "c46823b579f45a8c",
-        "type": "change",
-        "z": "6e9efb6131d41da6",
-        "name": "",
-        "rules": [
-            {
-                "t": "set",
-                "p": "MashpH",
-                "pt": "flow",
-                "to": "payload",
-                "tot": "msg"
-            }
-        ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 1360,
-        "y": 1260,
+        "y": 480,
         "wires": [
             []
         ]
@@ -968,7 +924,7 @@
         "name": "",
         "label": "Flow Rate (gpm)",
         "format": "{{msg.payload}}",
-        "layout": "row-left",
+        "layout": "row-spread",
         "className": "",
         "x": 640,
         "y": 1140,
@@ -1013,7 +969,7 @@
         "type": "ui_text",
         "z": "6e9efb6131d41da6",
         "group": "85ec42cd73660eb6",
-        "order": 4,
+        "order": 2,
         "width": 0,
         "height": 0,
         "name": "",
@@ -1058,8 +1014,8 @@
         "name": "",
         "group": "b0de2545b3a50e50",
         "order": 6,
-        "width": 0,
-        "height": 0,
+        "width": "3",
+        "height": "1",
         "passthru": false,
         "label": "Heat to Strike",
         "tooltip": "",
@@ -1101,7 +1057,7 @@
         "to": "",
         "reg": false,
         "x": 270,
-        "y": 700,
+        "y": 620,
         "wires": [
             [
                 "b479ed361930833d"
@@ -1115,8 +1071,8 @@
         "name": "",
         "group": "b0de2545b3a50e50",
         "order": 7,
-        "width": 0,
-        "height": 0,
+        "width": "3",
+        "height": "1",
         "passthru": false,
         "label": "Hysteresis Off",
         "tooltip": "",
@@ -1305,7 +1261,7 @@
         "z": "6e9efb6131d41da6",
         "name": "",
         "group": "045b99aa08e9a93b",
-        "order": 3,
+        "order": 4,
         "width": 0,
         "height": 0,
         "passthru": false,
@@ -1345,7 +1301,8 @@
         "y": 1100,
         "wires": [
             [
-                "7c51de39f212c666"
+                "7c51de39f212c666",
+                "4967159d531d06f0"
             ]
         ]
     },
@@ -1418,19 +1375,18 @@
         "id": "7c51de39f212c666",
         "type": "function",
         "z": "6e9efb6131d41da6",
-        "name": "Counter",
-        "func": "var count = 0;\nvar duration = 0;\n\nif( msg.topic == \"reset\" ) {\n    context.set(\"count\", 0);\n    context.set(\"duration\", Date.now());\n}\nelse {\n    count = context.get(\"count\");\n    context.set(\"count\", ++count);\n    duration = Date.now() - context.get(\"duration\");\n    context.set(\"duration\", duration);\n\n}\n\nmsg.payload = count;\nmsg.duration = duration / 1000.0; // Seconds\nreturn msg;",
+        "name": "Totalizer",
+        "func": "if( msg.topic == \"reset\" ) {\n    context.set(\"Totalizer\", 0);\n}\nelse {\n    var oldTotal = context.get(\"Totalizer\");\n    var total = oldTotal + msg.payload;\n    context.set(\"Totalizer\", total);\n}\n\nmsg.payload = total;\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
-        "initialize": "// Code added here will be run once\n// whenever the node is started.\ncontext.set(\"count\", 0);\ncontext.set(\"duration\", Date.now());",
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\ncontext.set(\"Totalizer\", 0);",
         "finalize": "",
         "libs": [],
         "x": 300,
         "y": 1100,
         "wires": [
             [
-                "2873a43ddd07fe8d",
-                "4967159d531d06f0"
+                "2873a43ddd07fe8d"
             ]
         ]
     },
@@ -1444,7 +1400,7 @@
                 "t": "set",
                 "p": "payload",
                 "pt": "msg",
-                "to": "payload * 0.00021",
+                "to": "$round( payload * 0.00021, 2 )",
                 "tot": "jsonata"
             }
         ],
@@ -1472,7 +1428,7 @@
                 "t": "set",
                 "p": "payload",
                 "pt": "msg",
-                "to": "payload * 0.0126 / duration",
+                "to": "$round( payload * 0.0126, 2 )",
                 "tot": "jsonata"
             }
         ],
@@ -1525,8 +1481,8 @@
         "y": 1360,
         "wires": [
             [
-                "bd7792bcd174dff3",
-                "7a9849183a924860"
+                "e97a67ea862f0281",
+                "fe9ae982f6d96733"
             ]
         ]
     },
@@ -1535,13 +1491,13 @@
         "type": "ui_text",
         "z": "6e9efb6131d41da6",
         "group": "85ec42cd73660eb6",
-        "order": 3,
+        "order": 4,
         "width": 0,
         "height": 0,
         "name": "",
         "label": "Flow Rate (gpm)",
         "format": "{{msg.payload}}",
-        "layout": "row-left",
+        "layout": "row-spread",
         "className": "",
         "x": 640,
         "y": 1400,
@@ -1552,7 +1508,7 @@
         "type": "ui_text",
         "z": "6e9efb6131d41da6",
         "group": "85ec42cd73660eb6",
-        "order": 4,
+        "order": 3,
         "width": 0,
         "height": 0,
         "name": "",
@@ -1565,26 +1521,6 @@
         "wires": []
     },
     {
-        "id": "bd7792bcd174dff3",
-        "type": "function",
-        "z": "6e9efb6131d41da6",
-        "name": "Counter",
-        "func": "var count = 0;\nvar duration = 0;\n\nif( msg.topic == \"reset\" ) {\n    context.set(\"count\", 0);\n    context.set(\"duration\", Date.now());\n}\nelse {\n    count = context.get(\"count\");\n    context.set(\"count\", ++count);\n    duration = Date.now() - context.get(\"duration\");\n    context.set(\"duration\", duration);\n\n}\n\nmsg.payload = count;\nmsg.duration = duration / 1000.0; // Seconds\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "// Code added here will be run once\n// whenever the node is started.\ncontext.set(\"count\", 0);\ncontext.set(\"duration\", Date.now());",
-        "finalize": "",
-        "libs": [],
-        "x": 300,
-        "y": 1360,
-        "wires": [
-            [
-                "2d02673677425f21",
-                "fe9ae982f6d96733"
-            ]
-        ]
-    },
-    {
         "id": "2d02673677425f21",
         "type": "change",
         "z": "6e9efb6131d41da6",
@@ -1594,7 +1530,7 @@
                 "t": "set",
                 "p": "payload",
                 "pt": "msg",
-                "to": "payload / 100",
+                "to": "$round( payload / 100, 2 )",
                 "tot": "jsonata"
             }
         ],
@@ -1621,7 +1557,7 @@
                 "t": "set",
                 "p": "payload",
                 "pt": "msg",
-                "to": "payload * 60 / 100",
+                "to": "$round( payload * 60 / 100, 2 )",
                 "tot": "jsonata"
             }
         ],
@@ -1693,22 +1629,6 @@
         "wires": []
     },
     {
-        "id": "7a9849183a924860",
-        "type": "debug",
-        "z": "6e9efb6131d41da6",
-        "name": "debug 1",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 280,
-        "y": 1500,
-        "wires": []
-    },
-    {
         "id": "876ceb85886b53df",
         "type": "inject",
         "z": "6e9efb6131d41da6",
@@ -1765,6 +1685,1132 @@
         ]
     },
     {
+        "id": "e97a67ea862f0281",
+        "type": "function",
+        "z": "6e9efb6131d41da6",
+        "name": "Totalizer",
+        "func": "if( msg.topic == \"reset\" ) {\n    context.set(\"Totalizer\", 0);\n}\nelse {\n    var oldTotal = context.get(\"Totalizer\");\n    var total = oldTotal + msg.payload;\n    context.set(\"Totalizer\", total);\n}\n\nmsg.payload = total;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\ncontext.set(\"Totalizer\", 0);",
+        "finalize": "",
+        "libs": [],
+        "x": 300,
+        "y": 1360,
+        "wires": [
+            [
+                "2d02673677425f21"
+            ]
+        ]
+    },
+    {
+        "id": "53b2be141e950d79",
+        "type": "ui_button",
+        "z": "6e9efb6131d41da6",
+        "name": "",
+        "group": "045b99aa08e9a93b",
+        "order": 10,
+        "width": "2",
+        "height": "1",
+        "passthru": false,
+        "label": "Cal 7.0",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "Cal,mid,7.00",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 540,
+        "y": 480,
+        "wires": [
+            [
+                "34b320719d21bae9"
+            ]
+        ]
+    },
+    {
+        "id": "34b320719d21bae9",
+        "type": "mqtt out",
+        "z": "6e9efb6131d41da6",
+        "name": "",
+        "topic": "BSB/Command-pH",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "f63735ef39c7ebd8",
+        "x": 770,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "2004cf3dae6e0b5f",
+        "type": "mqtt in",
+        "z": "6e9efb6131d41da6",
+        "name": "",
+        "topic": "BSB/Mash-pH",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "f63735ef39c7ebd8",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 750,
+        "y": 580,
+        "wires": [
+            [
+                "cb496618431c5ab7"
+            ]
+        ]
+    },
+    {
+        "id": "cbf0565542fbbdb7",
+        "type": "inject",
+        "z": "6e9efb6131d41da6",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "10",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "MashTemp",
+        "payloadType": "global",
+        "x": 570,
+        "y": 440,
+        "wires": [
+            [
+                "4dc70577bec494a7"
+            ]
+        ]
+    },
+    {
+        "id": "599da43739f761b9",
+        "type": "mqtt out",
+        "z": "6e9efb6131d41da6",
+        "name": "",
+        "topic": "BSB/Command-pH",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "f63735ef39c7ebd8",
+        "x": 950,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "4dc70577bec494a7",
+        "type": "change",
+        "z": "6e9efb6131d41da6",
+        "name": "F to C",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "$string(\"T,\") & $round((payload - 32) * 0.5556, 2)",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 770,
+        "y": 440,
+        "wires": [
+            [
+                "599da43739f761b9"
+            ]
+        ]
+    },
+    {
+        "id": "5a0c232379cccc1d",
+        "type": "ui_button",
+        "z": "6e9efb6131d41da6",
+        "name": "",
+        "group": "045b99aa08e9a93b",
+        "order": 10,
+        "width": "2",
+        "height": "1",
+        "passthru": false,
+        "label": "Cal 4.0",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "Cal,low,4.00",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 540,
+        "y": 520,
+        "wires": [
+            [
+                "34b320719d21bae9"
+            ]
+        ]
+    },
+    {
+        "id": "7e24e77949fd4435",
+        "type": "ui_button",
+        "z": "6e9efb6131d41da6",
+        "name": "",
+        "group": "045b99aa08e9a93b",
+        "order": 10,
+        "width": "2",
+        "height": "1",
+        "passthru": false,
+        "label": "Cal 10.0",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "Cal,high,10.00",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 540,
+        "y": 560,
+        "wires": [
+            [
+                "34b320719d21bae9"
+            ]
+        ]
+    },
+    {
+        "id": "473913c415525a73",
+        "type": "ui_gauge",
+        "z": "2368879745bedfe8",
+        "name": "",
+        "group": "f6f4b5041b80b6fd",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Temp",
+        "label": "F",
+        "format": "{{value}}",
+        "min": "32",
+        "max": "100",
+        "colors": [
+            "#005cb3",
+            "#4bce00",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 490,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "067a06691d625bd7",
+        "type": "ui_text_input",
+        "z": "2368879745bedfe8",
+        "name": "",
+        "label": "Temp Ceil",
+        "tooltip": "",
+        "group": "f6f4b5041b80b6fd",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "Ceil",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "str",
+        "x": 280,
+        "y": 120,
+        "wires": [
+            [
+                "859f59109e8ec8f8"
+            ]
+        ]
+    },
+    {
+        "id": "db16ddfc8655f377",
+        "type": "ui_text_input",
+        "z": "2368879745bedfe8",
+        "name": "",
+        "label": "Temp Floor",
+        "tooltip": "",
+        "group": "f6f4b5041b80b6fd",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "Floor",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "str",
+        "x": 270,
+        "y": 160,
+        "wires": [
+            [
+                "859f59109e8ec8f8"
+            ]
+        ]
+    },
+    {
+        "id": "859f59109e8ec8f8",
+        "type": "function",
+        "z": "2368879745bedfe8",
+        "name": "Range Controller",
+        "func": "var ceil = context.get(\"Ceil\");\nvar floor = context.get(\"Floor\");\nvar temp = context.get(\"Temp\");\nvar enabled = context.get(\"Enabled\");\n\nvar heating = { \"payload\": 0 };\nvar cooling = { \"payload\": 0 };\n\nif( msg.topic == 'Ceil' ) {\n    ceil = msg.payload;\n    context.set(\"Ceil\", ceil);\n}\nelse if (msg.topic == 'Floor') {\n    floor = msg.payload;\n    context.set(\"Floor\", floor);\n}\nelse if( msg.topic == 'Enabled') {\n    enabled = msg.payload;\n    context.set(\"Enabled\", enabled); \n}\nelse {\n    temp = msg.payload;\n    context.set(\"Temp\", temp);\n}\n\nif( enabled ) {\n    if( temp < floor )\n        heating = { \"payload\": 1 };\n    else if( temp > floor + 0.5 )\n        heating = { \"payload\": 0 };\n\n    if( temp > ceil )\n        cooling = { \"payload\": 1 }\n    else if( temp < ceil - 0.5 )\n        cooling = { \"payload\": 0 }\n}\nelse {\n    heating = { \"payload\": 0 };\n    cooling = { \"payload\": 0 };   \n}\n\nreturn [heating, cooling];",
+        "outputs": 2,
+        "noerr": 0,
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\ncontext.set(\"Ceil\", 200);\ncontext.set(\"Floor\", -200);\ncontext.set(\"Temp\", 0);\ncontext.set(\"Enabled\", false);",
+        "finalize": "",
+        "libs": [],
+        "x": 530,
+        "y": 160,
+        "wires": [
+            [
+                "17dab46c5d55d436",
+                "cec6f390cd73c236"
+            ],
+            [
+                "deb36e6d47b5dac0",
+                "91087c41b1dad718"
+            ]
+        ]
+    },
+    {
+        "id": "611c9bf2b5751feb",
+        "type": "mqtt out",
+        "z": "2368879745bedfe8",
+        "name": "",
+        "topic": "BSB/Unitank-1-Heat",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "f63735ef39c7ebd8",
+        "x": 900,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "05da9f1eecd0e948",
+        "type": "mqtt out",
+        "z": "2368879745bedfe8",
+        "name": "",
+        "topic": "BSB/Unitank-1-Cool",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "f63735ef39c7ebd8",
+        "x": 900,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "17dab46c5d55d436",
+        "type": "rbe",
+        "z": "2368879745bedfe8",
+        "name": "",
+        "func": "rbei",
+        "gap": "",
+        "start": "",
+        "inout": "out",
+        "septopics": true,
+        "property": "payload",
+        "topi": "topic",
+        "x": 710,
+        "y": 120,
+        "wires": [
+            [
+                "611c9bf2b5751feb"
+            ]
+        ]
+    },
+    {
+        "id": "deb36e6d47b5dac0",
+        "type": "rbe",
+        "z": "2368879745bedfe8",
+        "name": "",
+        "func": "rbei",
+        "gap": "",
+        "start": "",
+        "inout": "out",
+        "septopics": true,
+        "property": "payload",
+        "topi": "topic",
+        "x": 710,
+        "y": 200,
+        "wires": [
+            [
+                "05da9f1eecd0e948"
+            ]
+        ]
+    },
+    {
+        "id": "9b2bacec8087e106",
+        "type": "ui_gauge",
+        "z": "2368879745bedfe8",
+        "name": "",
+        "group": "3ec6c6d21c68fabf",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Temp",
+        "label": "F",
+        "format": "{{value}}",
+        "min": "32",
+        "max": "100",
+        "colors": [
+            "#005cb3",
+            "#4bce00",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 490,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "db6615a2107c2d11",
+        "type": "ui_text_input",
+        "z": "2368879745bedfe8",
+        "name": "",
+        "label": "Temp Ceil",
+        "tooltip": "",
+        "group": "3ec6c6d21c68fabf",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "Ceil",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "str",
+        "x": 280,
+        "y": 600,
+        "wires": [
+            [
+                "63d1d24be88e06a5"
+            ]
+        ]
+    },
+    {
+        "id": "e2955a24a175f07f",
+        "type": "ui_text_input",
+        "z": "2368879745bedfe8",
+        "name": "",
+        "label": "Temp Floor",
+        "tooltip": "",
+        "group": "3ec6c6d21c68fabf",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "Floor",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "str",
+        "x": 270,
+        "y": 640,
+        "wires": [
+            [
+                "63d1d24be88e06a5"
+            ]
+        ]
+    },
+    {
+        "id": "63d1d24be88e06a5",
+        "type": "function",
+        "z": "2368879745bedfe8",
+        "name": "Range Controller",
+        "func": "var ceil = context.get(\"Ceil\");\nvar floor = context.get(\"Floor\");\nvar temp = context.get(\"Temp\");\nvar enabled = context.get(\"Enabled\");\n\nvar heating = { \"payload\": 0 };\nvar cooling = { \"payload\": 0 };\n\nif (msg.topic == 'Ceil') {\n    ceil = msg.payload;\n    context.set(\"Ceil\", ceil);\n}\nelse if (msg.topic == 'Floor') {\n    floor = msg.payload;\n    context.set(\"Floor\", floor);\n}\nelse if (msg.topic == 'Enabled') {\n    enabled = msg.payload;\n    context.set(\"Enabled\", enabled);\n}\nelse {\n    temp = msg.payload;\n    context.set(\"Temp\", temp);\n}\n\nif (enabled) {\n    if (temp < floor)\n        heating = { \"payload\": 1 };\n    else if (temp > floor + 0.5)\n        heating = { \"payload\": 0 };\n\n    if (temp > ceil)\n        cooling = { \"payload\": 1 }\n    else if (temp < ceil - 0.5)\n        cooling = { \"payload\": 0 }\n}\nelse {\n    heating = { \"payload\": 0 };\n    cooling = { \"payload\": 0 };\n}\n\nreturn [heating, cooling];",
+        "outputs": 2,
+        "noerr": 0,
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\ncontext.set(\"Ceil\", 200);\ncontext.set(\"Floor\", -200);\ncontext.set(\"Temp\", 0);\ncontext.set(\"Enabled\", false);",
+        "finalize": "",
+        "libs": [],
+        "x": 530,
+        "y": 640,
+        "wires": [
+            [
+                "8ee6e55a679bc1eb",
+                "835e47ed865d5719"
+            ],
+            [
+                "a6a750de62117f2f",
+                "a21bea13e000e603"
+            ]
+        ]
+    },
+    {
+        "id": "5d2442ea6475a56c",
+        "type": "mqtt out",
+        "z": "2368879745bedfe8",
+        "name": "",
+        "topic": "BSB/Unitank-2-Heat",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "f63735ef39c7ebd8",
+        "x": 900,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "9fe89bfae62c930a",
+        "type": "mqtt out",
+        "z": "2368879745bedfe8",
+        "name": "",
+        "topic": "BSB/Unitank-2-Cool",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "f63735ef39c7ebd8",
+        "x": 900,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "8ee6e55a679bc1eb",
+        "type": "rbe",
+        "z": "2368879745bedfe8",
+        "name": "",
+        "func": "rbei",
+        "gap": "",
+        "start": "",
+        "inout": "out",
+        "septopics": true,
+        "property": "payload",
+        "topi": "topic",
+        "x": 710,
+        "y": 600,
+        "wires": [
+            [
+                "5d2442ea6475a56c"
+            ]
+        ]
+    },
+    {
+        "id": "a6a750de62117f2f",
+        "type": "rbe",
+        "z": "2368879745bedfe8",
+        "name": "",
+        "func": "rbei",
+        "gap": "",
+        "start": "",
+        "inout": "out",
+        "septopics": true,
+        "property": "payload",
+        "topi": "topic",
+        "x": 710,
+        "y": 680,
+        "wires": [
+            [
+                "9fe89bfae62c930a"
+            ]
+        ]
+    },
+    {
+        "id": "cec6f390cd73c236",
+        "type": "ui_led",
+        "z": "2368879745bedfe8",
+        "order": 5,
+        "group": "f6f4b5041b80b6fd",
+        "width": 0,
+        "height": 0,
+        "label": "Heating",
+        "labelPlacement": "left",
+        "labelAlignment": "left",
+        "colorForValue": [
+            {
+                "color": "#ff0000",
+                "value": "0",
+                "valueType": "num"
+            },
+            {
+                "color": "#008000",
+                "value": "1",
+                "valueType": "num"
+            }
+        ],
+        "allowColorForValueInMessage": false,
+        "shape": "circle",
+        "showGlow": true,
+        "name": "",
+        "x": 670,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "91087c41b1dad718",
+        "type": "ui_led",
+        "z": "2368879745bedfe8",
+        "order": 6,
+        "group": "f6f4b5041b80b6fd",
+        "width": 0,
+        "height": 0,
+        "label": "Cooling",
+        "labelPlacement": "left",
+        "labelAlignment": "left",
+        "colorForValue": [
+            {
+                "color": "#ff0000",
+                "value": "0",
+                "valueType": "num"
+            },
+            {
+                "color": "#008000",
+                "value": "1",
+                "valueType": "num"
+            }
+        ],
+        "allowColorForValueInMessage": false,
+        "shape": "circle",
+        "showGlow": true,
+        "name": "",
+        "x": 670,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "a21bea13e000e603",
+        "type": "ui_led",
+        "z": "2368879745bedfe8",
+        "order": 6,
+        "group": "3ec6c6d21c68fabf",
+        "width": 0,
+        "height": 0,
+        "label": "Cooling",
+        "labelPlacement": "left",
+        "labelAlignment": "left",
+        "colorForValue": [
+            {
+                "color": "#ff0000",
+                "value": "0",
+                "valueType": "num"
+            },
+            {
+                "color": "#008000",
+                "value": "1",
+                "valueType": "num"
+            }
+        ],
+        "allowColorForValueInMessage": false,
+        "shape": "circle",
+        "showGlow": true,
+        "name": "",
+        "x": 670,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "835e47ed865d5719",
+        "type": "ui_led",
+        "z": "2368879745bedfe8",
+        "order": 5,
+        "group": "3ec6c6d21c68fabf",
+        "width": 0,
+        "height": 0,
+        "label": "Heating",
+        "labelPlacement": "left",
+        "labelAlignment": "left",
+        "colorForValue": [
+            {
+                "color": "#ff0000",
+                "value": "0",
+                "valueType": "num"
+            },
+            {
+                "color": "#008000",
+                "value": "1",
+                "valueType": "num"
+            }
+        ],
+        "allowColorForValueInMessage": false,
+        "shape": "circle",
+        "showGlow": true,
+        "name": "",
+        "x": 670,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "6e7162aab7e189fc",
+        "type": "mqtt in",
+        "z": "2368879745bedfe8",
+        "name": "",
+        "topic": "BSB/Blue-Tilt",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "f63735ef39c7ebd8",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 150,
+        "y": 300,
+        "wires": [
+            [
+                "35285928d44fc69b",
+                "ab41f14a4eb1b5a3"
+            ]
+        ]
+    },
+    {
+        "id": "3dbf13289cd0d578",
+        "type": "mqtt in",
+        "z": "2368879745bedfe8",
+        "name": "",
+        "topic": "BSB/Purple-Tilt",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "f63735ef39c7ebd8",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 160,
+        "y": 780,
+        "wires": [
+            [
+                "a132df6db41e4db5",
+                "f898e3293821fdb6"
+            ]
+        ]
+    },
+    {
+        "id": "35285928d44fc69b",
+        "type": "ui_text",
+        "z": "2368879745bedfe8",
+        "group": "f6f4b5041b80b6fd",
+        "order": 7,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Blue-Temp",
+        "format": "{{msg.payload.Temp}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 350,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "ab41f14a4eb1b5a3",
+        "type": "ui_text",
+        "z": "2368879745bedfe8",
+        "group": "f6f4b5041b80b6fd",
+        "order": 8,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Blue-Gravity",
+        "format": "{{msg.payload.Grav}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 350,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "a132df6db41e4db5",
+        "type": "ui_text",
+        "z": "2368879745bedfe8",
+        "group": "3ec6c6d21c68fabf",
+        "order": 7,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Purple-Temp",
+        "format": "{{msg.payload.Temp}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 350,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "f898e3293821fdb6",
+        "type": "ui_text",
+        "z": "2368879745bedfe8",
+        "group": "3ec6c6d21c68fabf",
+        "order": 8,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Purple-Gravity",
+        "format": "{{msg.payload.Grav}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 360,
+        "y": 800,
+        "wires": []
+    },
+    {
+        "id": "6b2b6325f2502496",
+        "type": "mqtt in",
+        "z": "2368879745bedfe8",
+        "name": "",
+        "topic": "BSB/Unitank-1-Temp",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "f63735ef39c7ebd8",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 200,
+        "y": 200,
+        "wires": [
+            [
+                "473913c415525a73",
+                "859f59109e8ec8f8",
+                "5d5afffe64139d4b"
+            ]
+        ]
+    },
+    {
+        "id": "e1e76ec3e6429efe",
+        "type": "mqtt in",
+        "z": "2368879745bedfe8",
+        "name": "",
+        "topic": "BSB/Unitank-2-Temp",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "f63735ef39c7ebd8",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 200,
+        "y": 680,
+        "wires": [
+            [
+                "9b2bacec8087e106",
+                "63d1d24be88e06a5",
+                "0db32d69bd9f4646"
+            ]
+        ]
+    },
+    {
+        "id": "8dc19787cb4b39b7",
+        "type": "ui_switch",
+        "z": "2368879745bedfe8",
+        "name": "",
+        "label": "Enabled",
+        "tooltip": "",
+        "group": "f6f4b5041b80b6fd",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "Enabled",
+        "topicType": "str",
+        "style": "",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "",
+        "offcolor": "",
+        "animate": false,
+        "className": "",
+        "x": 280,
+        "y": 60,
+        "wires": [
+            [
+                "859f59109e8ec8f8"
+            ]
+        ]
+    },
+    {
+        "id": "2029e3cc584c7290",
+        "type": "ui_switch",
+        "z": "2368879745bedfe8",
+        "name": "",
+        "label": "Enabled",
+        "tooltip": "",
+        "group": "3ec6c6d21c68fabf",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "Enabled",
+        "topicType": "str",
+        "style": "",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "",
+        "offcolor": "",
+        "animate": false,
+        "className": "",
+        "x": 280,
+        "y": 540,
+        "wires": [
+            [
+                "63d1d24be88e06a5"
+            ]
+        ]
+    },
+    {
+        "id": "7acacd43cd2fe746",
+        "type": "ui_button",
+        "z": "2368879745bedfe8",
+        "name": "",
+        "group": "f6f4b5041b80b6fd",
+        "order": 10,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "Calibrate DO",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "cal",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 910,
+        "y": 340,
+        "wires": [
+            [
+                "770f72ae7777e31d"
+            ]
+        ]
+    },
+    {
+        "id": "770f72ae7777e31d",
+        "type": "mqtt out",
+        "z": "2368879745bedfe8",
+        "name": "",
+        "topic": "BSB/Command-DO2",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "f63735ef39c7ebd8",
+        "x": 1140,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "864c72ecbc0de3b3",
+        "type": "ui_text",
+        "z": "2368879745bedfe8",
+        "group": "f6f4b5041b80b6fd",
+        "order": 9,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Dissolved O2",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 1110,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "b5fe8bba60e8d12e",
+        "type": "mqtt in",
+        "z": "2368879745bedfe8",
+        "name": "",
+        "topic": "BSB/DO2",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "f63735ef39c7ebd8",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 920,
+        "y": 400,
+        "wires": [
+            [
+                "864c72ecbc0de3b3"
+            ]
+        ]
+    },
+    {
+        "id": "bd55f24257a577c3",
+        "type": "inject",
+        "z": "2368879745bedfe8",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "10",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "Unitank-1-Temp",
+        "payloadType": "flow",
+        "x": 880,
+        "y": 280,
+        "wires": [
+            [
+                "9f33f708fc926008"
+            ]
+        ]
+    },
+    {
+        "id": "5d5afffe64139d4b",
+        "type": "change",
+        "z": "2368879745bedfe8",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "Unitank-1-Temp",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 450,
+        "y": 240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5d894eb52cbb199b",
+        "type": "mqtt out",
+        "z": "2368879745bedfe8",
+        "name": "",
+        "topic": "BSB/Command-DO2",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "f63735ef39c7ebd8",
+        "x": 1260,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "9f33f708fc926008",
+        "type": "change",
+        "z": "2368879745bedfe8",
+        "name": "F to C",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "$string(\"T,\") & $round((payload - 32) * 0.5556, 2)",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1070,
+        "y": 280,
+        "wires": [
+            [
+                "5d894eb52cbb199b"
+            ]
+        ]
+    },
+    {
+        "id": "0db32d69bd9f4646",
+        "type": "change",
+        "z": "2368879745bedfe8",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "Unitank-2-Temp",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 450,
+        "y": 720,
+        "wires": [
+            []
+        ]
+    },
+    {
         "id": "477a6942d4870529",
         "type": "mqtt in",
         "z": "174d33dd188055cb",
@@ -1817,24 +2863,20 @@
         "checkall": "true",
         "repair": false,
         "outputs": 4,
-        "x": 330,
-        "y": 500,
+        "x": 270,
+        "y": 300,
         "wires": [
             [
-                "100f531fcd8841be",
-                "bd1111ed5c06b60d"
+                "100f531fcd8841be"
             ],
             [
-                "e4318d557af535a3",
-                "8044d6f98d0951dc"
+                "e4318d557af535a3"
             ],
             [
-                "a5e68e194ffec01b",
-                "e131c985a4e3c249"
+                "a5e68e194ffec01b"
             ],
             [
-                "0c884909cb08aaf1",
-                "95cf6c5166e12cc7"
+                "0c884909cb08aaf1"
             ]
         ]
     },
@@ -1866,7 +2908,7 @@
                 "t": "set",
                 "p": "payload",
                 "pt": "msg",
-                "to": "[{\"Topic\":\"BSB/HLT-Pump\",\"GPIO\":4,\"Type\":\"PWM\"},{\"Topic\":\"BSB/Sparge-Pump\",\"GPIO\":2,\"Type\":\"PWM\"},{\"Topic\":\"BSB/Whirlpool-Pump\",\"GPIO\":12,\"Type\":\"PWM\"},{\"Topic\":\"BSB/HLT-Element\",\"GPIO\":26,\"Type\":\"Digital-Out\"},{\"Topic\":\"BSB/Kettle-Element\",\"GPIO\":25,\"Type\":\"Digital-Out\"},{\"Topic\":\"BSB/HLT-Flow\",\"GPIO\":13,\"Type\":\"Digital-In\"},{\"Topic\":\"BSB/Kettle-Flow\",\"GPIO\":14,\"Type\":\"Digital-In\"},{\"Topic\":\"BSB/HLT-Temp\",\"Index\":0,\"Type\":\"Onewire\"},{\"Topic\":\"BSB/Mash-Temp\",\"Index\":1,\"Type\":\"Onewire\"},{\"Topic\":\"BSB/Kettle-Temp\",\"Index\":2,\"Type\":\"Onewire\"}]",
+                "to": "{\"Hot Side\":[{\"Topic\":\"BSB/HLT-Pump\",\"GPIO\":4,\"Type\":\"PWM\"},{\"Topic\":\"BSB/Sparge-Pump\",\"GPIO\":2,\"Type\":\"PWM\"},{\"Topic\":\"BSB/Whirlpool-Pump\",\"GPIO\":12,\"Type\":\"PWM\"},{\"Topic\":\"BSB/HLT-Element\",\"GPIO\":26,\"Type\":\"Digital-Out\"},{\"Topic\":\"BSB/Kettle-Element\",\"GPIO\":25,\"Type\":\"Digital-Out\"},{\"Topic\":\"BSB/HLT-Flow\",\"GPIO\":13,\"Type\":\"Counter\"},{\"Topic\":\"BSB/Kettle-Flow\",\"GPIO\":14,\"Type\":\"Counter\"},{\"Topic\":\"BSB/HLT-Temp\",\"Index\":0,\"Type\":\"Onewire\"},{\"Topic\":\"BSB/Mash-Temp\",\"Index\":1,\"Type\":\"Onewire\"},{\"Topic\":\"BSB/Kettle-Temp\",\"Index\":2,\"Type\":\"Onewire\"}]}",
                 "tot": "json"
             }
         ],
@@ -1893,7 +2935,7 @@
                 "t": "set",
                 "p": "payload",
                 "pt": "msg",
-                "to": "[{\"Topic\":\"BSB/Unitank-1-Temp\",\"Index\":1,\"Type\":\"Onewire\"},{\"Topic\":\"BSB/Unitank-2-Temp\",\"Index\":0,\"Type\":\"Onewire\"},{\"Topic\":\"BSB/Unitank-1-Heat\",\"GPIO\":27,\"Type\":\"Digital-Out\"},{\"Topic\":\"BSB/Unitank-2-Heat\",\"GPIO\":15,\"Type\":\"Digital-Out\"},{\"Topic\":\"BSB/Unitank-1-Cool\",\"GPIO\":25,\"Type\":\"Digital-Out\"},{\"Topic\":\"BSB/Unitank-2-Cool\",\"GPIO\":14,\"Type\":\"Digital-Out\"},{\"Topic\":\"BSB/Blue-Tilt\",\"Index\":5,\"Type\":\"Tilt\"},{\"Topic\":\"BSB/Purple-Tilt\",\"Index\":3,\"Type\":\"Tilt\"}]",
+                "to": "{\"Cold Side\":[{\"Topic\":\"BSB/Unitank-1-Temp\",\"Index\":1,\"Type\":\"Onewire\"},{\"Topic\":\"BSB/Unitank-2-Temp\",\"Index\":0,\"Type\":\"Onewire\"},{\"Topic\":\"BSB/Unitank-1-Heat\",\"GPIO\":27,\"Type\":\"Digital-Out\"},{\"Topic\":\"BSB/Unitank-2-Heat\",\"GPIO\":15,\"Type\":\"Digital-Out\"},{\"Topic\":\"BSB/Unitank-1-Cool\",\"GPIO\":25,\"Type\":\"Digital-Out\"},{\"Topic\":\"BSB/Unitank-2-Cool\",\"GPIO\":14,\"Type\":\"Digital-Out\"},{\"Topic\":\"BSB/Blue-Tilt\",\"Index\":5,\"Type\":\"Tilt\"},{\"Topic\":\"BSB/Purple-Tilt\",\"Index\":3,\"Type\":\"Tilt\"}]}",
                 "tot": "json"
             }
         ],
@@ -1920,8 +2962,8 @@
                 "t": "set",
                 "p": "payload",
                 "pt": "msg",
-                "to": "",
-                "tot": "str"
+                "to": "{\"pH Meter\":[{\"Type\":\"Atlas\",\"Rx\":26,\"Tx\":27,\"Topic\":\"BSB/Mash-pH\",\"Command\":\"BSB/Command-pH\"}]}",
+                "tot": "json"
             }
         ],
         "action": "",
@@ -1947,8 +2989,8 @@
                 "t": "set",
                 "p": "payload",
                 "pt": "msg",
-                "to": "",
-                "tot": "str"
+                "to": "{\"DO2 Meter\":[{\"Type\":\"Atlas\",\"Rx\":23,\"Tx\":22,\"Topic\":\"BSB/DO2\",\"Command\":\"BSB/Command-DO2\"}]}",
+                "tot": "json"
             }
         ],
         "action": "",
@@ -1990,7 +3032,7 @@
         "type": "ui_text",
         "z": "174d33dd188055cb",
         "group": "bcb3e320136b061c",
-        "order": 8,
+        "order": 1,
         "width": 0,
         "height": 0,
         "name": "",
@@ -2052,7 +3094,7 @@
         "y": 600,
         "wires": [
             [
-                "2135046b301ea555"
+                "81950c8fd2d2de6f"
             ]
         ]
     },
@@ -2121,7 +3163,7 @@
         "type": "ui_text",
         "z": "174d33dd188055cb",
         "group": "bcb3e320136b061c",
-        "order": 8,
+        "order": 2,
         "width": 0,
         "height": 0,
         "name": "",
@@ -2138,7 +3180,7 @@
         "type": "ui_text",
         "z": "174d33dd188055cb",
         "group": "bcb3e320136b061c",
-        "order": 8,
+        "order": 3,
         "width": 0,
         "height": 0,
         "name": "",
@@ -2155,7 +3197,7 @@
         "type": "ui_text",
         "z": "174d33dd188055cb",
         "group": "bcb3e320136b061c",
-        "order": 8,
+        "order": 4,
         "width": 0,
         "height": 0,
         "name": "",
@@ -2197,12 +3239,90 @@
         "tosidebar": true,
         "console": false,
         "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
+        "complete": "true",
+        "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
         "x": 330,
         "y": 120,
         "wires": []
+    },
+    {
+        "id": "81950c8fd2d2de6f",
+        "type": "switch",
+        "z": "174d33dd188055cb",
+        "name": "",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Hot Side",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Cold Side",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "pH Meter",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "DO2 Meter",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 4,
+        "x": 490,
+        "y": 520,
+        "wires": [
+            [
+                "bd1111ed5c06b60d"
+            ],
+            [
+                "8044d6f98d0951dc"
+            ],
+            [
+                "e131c985a4e3c249"
+            ],
+            [
+                "95cf6c5166e12cc7"
+            ]
+        ]
+    },
+    {
+        "id": "671ab5e5e2842853",
+        "type": "inject",
+        "z": "174d33dd188055cb",
+        "name": "Push Config",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 270,
+        "y": 380,
+        "wires": [
+            [
+                "0c884909cb08aaf1"
+            ]
+        ]
     }
 ]
