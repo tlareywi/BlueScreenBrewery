@@ -140,7 +140,7 @@ All the currently supported values for the "Type" field in the configuration JSO
    - Command - Optional. The MQTT message the sensor will listen on for incoming commands. This can be used to issue calibration or temperature compensation commands from Node-Red flows. 
 
 
-* Tilt        - Integrates temperature and Sp.Gr. readings from a Tilt sensor. The Index field maps to the Tilt color as defined below.
+* Tilt        - Integrates temperature and Sp.Gr. readings from a Tilt sensor.
     - Topic - Required. Payload is set to JSON containing the reading data in the format {"Temp": x, "Grav": y}.
     - GPIO  - Required.
     - Index - Required. Index in this context maps to the Tilt sensor color. The mappings are given below. For example, to integrate a Blue Tilt set Index to 5.   
