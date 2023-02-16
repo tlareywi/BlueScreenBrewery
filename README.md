@@ -102,45 +102,45 @@ Configure message. The target device reads the configuration and begins listenin
 ### Configuration JSON details (work in progress)
 All the currently supported values for the "Type" field in the configuration JSON. Note, the 'Topic' field is always required and denotes the MQTT messsage that will be subscribed to or published on depending on the type. For example, type Digital-In will publish to the Topic while type Digital-Out will subscribe to the Topic. 
 
-* Digital-In  - Reads a binary value, 0 or 1, from the pin given in the GPIO field. The message is broadcast whenever the value changes.
+* **Digital-In**  - Reads a binary value, 0 or 1, from the pin given in the GPIO field. The message is broadcast whenever the value changes.
     - Topic - Required. Payload will be set to 0 or 1 reflecting pin state.
     - GPIO  - Required. An integer representing the assigned GPIO pin.
 
 
-* Digital-Out - Writes a binary value, 0 or 1, to the pin given in the GPIO field. Used to control on/off devices such as some types of pumps and heaters. Node-Red flows can modulate this state over time to implement a 'Duty Cycle' to control devices such as AC heaters attached to solid state relays.
+* **Digital-Out** - Writes a binary value, 0 or 1, to the pin given in the GPIO field. Used to control on/off devices such as some types of pumps and heaters. Node-Red flows can modulate this state over time to implement a 'Duty Cycle' to control devices such as AC heaters attached to solid state relays.
     - Topic - Required. Set payload to 0 or 1.
     - GPIO  - Required.
 
 
-* PWM         - Pulse width modulation. A digital signal pulsed at a high frequency. Can be used to vary power directly to low voltage devices; e.g . dim an LED, or vary a higher voltage analog signal with some additional hardware. A common application is to vary the flow rate of DC pumps. Advanced users can change the frequency and resolution in Config.h as desired.
+* **PWM**         - Pulse width modulation. A digital signal pulsed at a high frequency. Can be used to vary power directly to low voltage devices; e.g . dim an LED, or vary a higher voltage analog signal with some additional hardware. A common application is to vary the flow rate of DC pumps. Advanced users can change the frequency and resolution in Config.h as desired.
     - Topic - Required. Set payload to an integrer in the range [0, 255] unless custom resolution is configured.
     - GPIO  - Required.
 
 
-* Analog-In   - Performs an analog value read from the associated GPIO pin. The message is broadcast whenever the value changes.
+* **Analog-In**   - Performs an analog value read from the associated GPIO pin. The message is broadcast whenever the value changes.
     - Topic - Required. Set payload to an integer value.
     - GPIO  - Required.
 
 
-* Counter     - Publishes 'pulses per second' from the associated GPIO pin. This message is broadcast every second regardless of value change. A common application is integration of digital flow meters.
+* **Counter**     - Publishes 'pulses per second' from the associated GPIO pin. A common application is integration of digital flow meters.
     - Topic - Required. Payload is set to the integer number of pulses received in the last second.
     - GPIO  - Required.   
 
 
-* Onewire     - DS18B20 (Dallas Semiconductor) temperature sensor. The message is broadcast upon a value change.
+* **Onewire**     - DS18B20 (Dallas Semiconductor) temperature sensor. The message is broadcast upon a value change.
     - Topic - Required. Payload is set to the floating point value returned by the sensor in F units.
     - GPIO  - Required.
     - Index - Required. Dnotes the index of the sensor on the Onewire bus in the range of number of sensors on the bus; e.g For three sensors valid values are 0, 1 and 2.
 
 
-* Atlas       - Integrates an Atlas Scientific sensor via their EZO embedded board such as pH and dissolved O2 meters.
+* **Atlas**       - Integrates an Atlas Scientific sensor via their EZO embedded board such as pH and dissolved O2 meters.
    - Topic   - Required. Payload is set to raw data from the sensor. This can be either a status string (e.g. *OK) or a reading such as 4.25. 
    - Rx      - Required. The integer software serial GPIO pin used for rx (receive).
    - Tx      - Required. The integer software serial GPIO pin used for tx (send).
    - Command - Optional. The MQTT message the sensor will listen on for incoming commands. This can be used to issue calibration or temperature compensation commands from Node-Red flows. 
 
 
-* Tilt        - Integrates temperature and Sp.Gr. readings from a Tilt sensor.
+* **Tilt**        - Integrates temperature and Sp.Gr. readings from a Tilt sensor.
     - Topic - Required. Payload is set to JSON containing the reading data in the format {"Temp": x, "Grav": y}.
     - GPIO  - Required.
     - Index - Required. Index in this context maps to the Tilt sensor color. The mappings are given below. For example, to integrate a Blue Tilt set Index to 5.   
