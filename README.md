@@ -1,4 +1,4 @@
-# Introduction
+# Blue Screen Brewery
 A sophisticated system for brewery automation built around Node-Red and MQTT. Node-Red is a widely adopted low-code programming environment used
 in production automation systems and well suited for brewery automation. MQTT is an IoT (Internet of Things) communication protocol built on 
 TCP. Blue Screen Brewery (BSB) leverages both these technologies to integrate sensors and devices found in the brewery along with external
@@ -13,6 +13,9 @@ the 'out-of-the-box' firmware are;
 * Onewire temperature sensors
 * Atlas Scientific EZO sensors (pH and DO2)
 * BrewFather via 3rd party contributor to Node-Red
+
+## Development Status
+Still in the early stages of development. Supported devices, interfaces and various other aspects of the code are open to change as new requirements are discovered, feedback from other users is considered, etc. That said, I already run this in my own brewery which is generally 'always on'. Key components levergaged, such as Node-Red and Mosquitto, are already stable. The firmmware was a ground up effort and almost certainly contains bugs, but seems stable enough for home brewery use (i.e. has been tested with lengthy up-time over weeks).   
 
 ## Architecture
 The center of the system is the Node-Red instance running on any supported platform; Windows, MacOS, Rasp-Pi, Azure cloud, etc. The MQTT broker is generally, but
@@ -94,13 +97,13 @@ the MQTT message name to bind the device. The meaning of Index depends on the de
 ```
 
 The image below is an example in Node-Red of supporting four Ardunino devices all with a different configuration. The incoming Register message on the left flows to a Switch node
-that routes the message based on the DEVICE_NAME in the payload to the matching Change node. The Change node sets the msg.payload to the approprate JSON and broadcasts in via the
+that routes the message based on the DEVICE_NAME in the payload to the matching Change node. The Change node sets the msg.payload to the approprate JSON and broadcasts it via the
 Configure message. The target device reads the configuration and begins listening/publishing as instructed.
 
 ![BSB Config](screen_captures/configuration.png)
 
-## Configuration JSON details (work in progress)
-All the currently supported values for the "Type" field in the configuration JSON. Note, the 'Topic' field is always required and denotes the MQTT messsage that will be subscribed to or published on depending on the type. For example, type Digital-In will publish to the Topic while type Digital-Out will subscribe to the Topic. 
+## Device Types
+These are the valid devices to be used in the configuration 'Type' field(s). Note, the 'Topic' field is always required and denotes the MQTT messsage that will be subscribed to or published on depending on the type. For example, type Digital-In will publish to the Topic while type Digital-Out will subscribe to the Topic. 
 
 * **Digital-In**  - Reads a binary value, 0 or 1, from the pin given in the GPIO field. The message is broadcast whenever the value changes.
     - Topic - Required. Payload will be set to 0 or 1 reflecting pin state.
