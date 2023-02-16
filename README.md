@@ -144,16 +144,14 @@ All the currently supported values for the "Type" field in the configuration JSO
     - Topic - Required. Payload is set to JSON containing the reading data in the format {"Temp": x, "Grav": y}.
     - GPIO  - Required.
     - Index - Required. Index in this context maps to the Tilt sensor color. The mappings are given below. For example, to integrate a Blue Tilt set Index to 5.   
-    
-<p align="center">
-| Index | Color         |
-| ----- | -------------:|
-| 0     | Red           |
-| 1     | Greed         |
-| 2     | Black         |
-| 3     | Purple        |
-| 4     | Orange        |
-| 5     | Blue          |
-| 6     | Yellow        |
-| 7     | Pink          |
-</p>
+
+| Index                                     | Color                                      |
+| ------------------------------------------| ------------------------------------------:|
+| 0                                         | Red                                        |
+| 1                                         | Greed                                      |
+| 2                                         | Black                                      |
+| 3                                         | Purple                                     |
+| 4                                         | Orange                                     |
+| 5                                         | Blue                                       |
+| 6                                         | Yellow                                     |
+| 7                                         | Pink                                       |
