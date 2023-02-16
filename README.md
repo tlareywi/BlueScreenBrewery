@@ -14,7 +14,7 @@ the 'out-of-the-box' firmware are;
 * Atlas Scientific EZO sensors (pH and DO2)
 * BrewFather via 3rd party contributor to Node-Red
 
-### Architecture
+## Architecture
 The center of the system is the Node-Red instance running on any supported platform; Windows, MacOS, Rasp-Pi, Azure cloud, etc. The MQTT broker is generally, but
 not necessarily, installed on the same machine. For convinience, a pre-configured Rasp-Pi image is available for download (TODO) which provides a working Node-Red
 and MQTT installtion. Node-Red communicates with any number of Arduino boards (ESP32) via MQTT to controll attached devices, read from sensors, etc. The firmware is
@@ -22,13 +22,13 @@ common between all Arduino devices and configured dynamically via messages from 
 
 ![BSB Arch](screen_captures/BlueScreenBrewery.png)
 
-### User Interface
+## User Interface
 A browser based UI is generated via use of Node-Red Deshboard nodes within the flow. Create a layout and UI elements specific to your brewery needs. An example of
 a three vessel 'hot side' configuration is shown below.
 
 ![BSB UI](screen_captures/BSBHotSide.png)
 
-### Building the BSB Firmware
+## Building the BSB Firmware
 The firmware has only been tested on an ESP32 board and the 'helper' script referenced below assumes such a device.
 
 * Download arduino-cli from https://arduino.github.io/arduino-cli/0.20/installation/
@@ -38,7 +38,7 @@ The firmware has only been tested on an ESP32 board and the 'helper' script refe
 * On Windows, edit build.bat to set the port and then run built.bat from within Firmware_ESP32
 * For other operating systems, use build.bat as a reference for what commands to run.  
 
-### Firmware Configuration
+## Firmware Configuration
 When the BSB firmware boots, it sends the MQTT message 'BSB/Register'. Node-Red listens for this event and responds with 'BSB/Configure' which contains JSON describing the
 device types and mappings between MQTT messages and Arduino pin state. For example, suppose Config.h is edited so the DEVICE_NAME is 'Cold Side'. When this device boots, it
 will send the 'BSB/Register' message with the payload 'Cold Side'. Node-Red receives this message and chooses the JSON to send based on the device name payload. Node-Red sends 
@@ -99,7 +99,7 @@ Configure message. The target device reads the configuration and begins listenin
 
 ![BSB Config](screen_captures/configuration.png)
 
-### Configuration JSON details (work in progress)
+## Configuration JSON details (work in progress)
 All the currently supported values for the "Type" field in the configuration JSON. Note, the 'Topic' field is always required and denotes the MQTT messsage that will be subscribed to or published on depending on the type. For example, type Digital-In will publish to the Topic while type Digital-Out will subscribe to the Topic. 
 
 * **Digital-In**  - Reads a binary value, 0 or 1, from the pin given in the GPIO field. The message is broadcast whenever the value changes.
@@ -144,7 +144,8 @@ All the currently supported values for the "Type" field in the configuration JSO
     - Topic - Required. Payload is set to JSON containing the reading data in the format {"Temp": x, "Grav": y}.
     - GPIO  - Required.
     - Index - Required. Index in this context maps to the Tilt sensor color. The mappings are given below. For example, to integrate a Blue Tilt set Index to 5.   
-
+    
+<p align="center">
 | Index | Color         |
 | ----- | -------------:|
 | 0     | Red           |
@@ -155,3 +156,4 @@ All the currently supported values for the "Type" field in the configuration JSO
 | 5     | Blue          |
 | 6     | Yellow        |
 | 7     | Pink          |
+</p>
