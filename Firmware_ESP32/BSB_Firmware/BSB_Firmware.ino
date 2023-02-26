@@ -146,7 +146,7 @@ void initTopicMappings( const String& payload ) {
       
       mqtt.subscribe(topic, [numPWMChannels](const String & payload, const size_t size) {
         int dutyCyle = payload.toInt();
-        if( dutyCyle > 0 && dutyCyle < MaxPWMDutyCycke )
+        if( dutyCyle > -1 && dutyCyle <= MaxPWMDutyCycke )
           ledcWrite(numPWMChannels, payload.toInt());
       });
     }
