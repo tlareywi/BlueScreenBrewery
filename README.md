@@ -1,9 +1,5 @@
 # Blue Screen Brewery
-A sophisticated system for brewery automation built around Node-Red and MQTT. Node-Red is a widely adopted low-code programming environment used
-in production automation systems and well suited for brewery automation. MQTT is an IoT (Internet of Things) communication protocol built on 
-TCP. Blue Screen Brewery (BSB) leverages both these technologies to integrate sensors and devices found in the brewery along with external
-software services in a single integrated user interface. Some examples of elements that are possible to integrate with
-the 'out-of-the-box' firmware are;  
+A sophisticated system for brewery automation built around [Node-Red](https://nodered.org/) and [MQTT](https://mqtt.org/). Node-Red is a widely adopted low-code programming environment used in production automation systems and well suited for brewery automation. MQTT is an IoT (Internet of Things) communication protocol built on TCP. Blue Screen Brewery (BSB) leverages both these technologies to integrate sensors and devices found in the brewery along with external software services in a single integrated user interface. BSB is inspired by other brewery automation systems such as [BruControl](https://brucontrol.com/) and [CraftBeerPi](http://web.craftbeerpi.com/) but aims for maximum flexibility and extensibility in a low-code environment. BSB is entirely open source under the Apache 2 license. Some examples of elements that are possible to integrate with the 'out-of-the-box' firmware are;  
 
 * DC Pumps (more generally, PWM devices)
 * SSR controlled AC heating elements
@@ -18,18 +14,40 @@ the 'out-of-the-box' firmware are;
 Still in the early stages of development. Supported devices, interfaces and various other aspects of the code are open to change as new requirements are discovered, feedback from other users is considered, etc. That said, I already run this in my own brewery which is generally 'always on'. Key components levergaged, such as Node-Red and Mosquitto, are already stable. The firmmware was a ground up effort and almost certainly contains bugs, but seems stable enough for home brewery use (i.e. has been tested with lengthy up-time over weeks).   
 
 ## Architecture
-The center of the system is the Node-Red instance running on any supported platform; Windows, MacOS, Rasp-Pi, Azure cloud, etc. The MQTT broker is generally, but
-not necessarily, installed on the same machine. For convinience, a pre-configured Rasp-Pi image is available for download (TODO) which provides a working Node-Red
-and MQTT installtion. Node-Red communicates with any number of Arduino boards (ESP32) via MQTT to controll attached devices, read from sensors, etc. The firmware is
-common between all Arduino devices and configured dynamically via messages from Node-Red. More on this in the details below.
+The center of the system is the Node-Red instance running on any supported platform; Windows, MacOS, Rasp-Pi, Azure cloud, etc. The MQTT broker is generally, but not necessarily, installed on the same machine. For convinience, a pre-configured Rasp-Pi image is available for download (TODO) which provides a working Node-Red and MQTT installtion. Node-Red communicates with any number of Arduino boards (ESP32) via MQTT to controll attached devices, read from sensors, etc. The firmware is common between all Arduino devices and configured dynamically via messages from Node-Red. More on this in the details below.
 
 ![BSB Arch](screen_captures/BlueScreenBrewery.png)
 
 ## User Interface
-A browser based UI is generated via use of Node-Red Deshboard nodes within the flow. Create a layout and UI elements specific to your brewery needs. An example of
-a three vessel 'hot side' configuration is shown below.
+A browser based UI is generated via use of Node-Red Deshboard nodes within the flow. Create a layout and UI elements specific to your brewery needs. An example of a three vessel 'hot side' configuration is shown below.
 
 ![BSB UI](screen_captures/BSBHotSide.png)
+
+# Installation
+Installtion involves the following steps presented in detail below. In addition to the machine running Node-Red and MQTT, any number of Arduino ESP32 boards are needed to run the BSB firmware and integrate the actual hardware devices in the brewery; e.g. pumps, SSRs, etc. This document does not cover building a hardware control panel; just the software/firmware side is considerded.
+
+* Install Node-Red and an MQTT broker on a supported machine. We'll cover Raspberry Pi below but it could be Windows, Mac or even in the cloud.
+* Configure MQTT to use SSL/TLS. Technically optional, but secures communication between Node-Red and your Arduino controllers.
+* Build the BSB firmware and burn to all desired Arduino boards.
+* Configure Arduino controllers (i.e. assign functions to pins) via JSON in Node-Red.
+* Build Node-Red flows to run your brewery and make beer!
+
+## Raspberry Pi System with Node-Red and Mosquitto (MQTT)
+
+* Follow the instuctions for installing [Ubuntu-Server](https://ubuntu.com/tutorials/how-to-install-ubuntu-on-your-raspberry-pi#1-overview) using the RaspPi Imager.
+* Next, perform the steps here for installing [Node-Red](https://nodered.org/docs/getting-started/raspberrypi)
+* Run ```sudo apt install mosquitto mosquitto-clients``` to install the Mosquitto MQTT broker.
+
+## Configure and Secure Mosquitto (optional)
+Many tutorials on running Mosquitto on a local network use username/password authentication 'in the open'. While this may be low'ish risk for a private network, most would prefer not to have authentication params flying around wirelessly in plain text. The steps below configure MQTT to use certificate authentication and TLS encryption. If this is configured, then you must also copy the certs into the firmware configuration file when building (more on this later). Node-Red also needs to have the cert files but this is relaively trivial to configure. 
+
+* On the Node-Red/MQTT machine, download this script [generate-CA.sh](https://github.com/owntracks/tools/tree/master/TLS).
+* generate-CA.sh without any arguments will generate the server certificates. Place them in /etc/mosquitto/certs.
+* Run ```chmown -R mosquitto /etc/mosquitto/certs``` to ensure Mosquito can read the files.
+* Edit /etc/mosquitto/conf.d/default.conf to point at the cert files and enable required certificates. An example is provided in this repo under Mosquitto.
+* Restart Mosquitto using ```sudo service mosquitto restart```
+* Generate the client certs by running ```generate-CA.sh client [name]```. Name can be anything but it must not be empty.
+* ca.crt, ```[name].key``` and ```[name].crt``` are needed for both Node-Red's MQTT configuration and the BSB firmware. More on this later. 
 
 ## Building the BSB Firmware
 The firmware has only been tested on an ESP32 board and the 'helper' script referenced below assumes such a device.
