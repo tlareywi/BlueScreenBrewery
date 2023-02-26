@@ -271,7 +271,6 @@ void setup() {
   client.setCACert(ca_cert);
   client.setCertificate(client_cert);
   client.setPrivateKey(client_key);
-  client.setInsecure(); // TODO: Fix. I think we need a fingerprint of the sever cert.
 #endif
 
   connectClient();
