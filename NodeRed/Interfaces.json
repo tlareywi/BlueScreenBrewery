@@ -1,0 +1,558 @@
+[
+    {
+        "id": "174d33dd188055cb",
+        "type": "tab",
+        "label": "Interfaces",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "477a6942d4870529",
+        "type": "mqtt in",
+        "z": "174d33dd188055cb",
+        "name": "",
+        "topic": "BSB/Register",
+        "qos": "0",
+        "datatype": "auto-detect",
+        "broker": "f63735ef39c7ebd8",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 110,
+        "y": 260,
+        "wires": [
+            [
+                "2135046b301ea555"
+            ]
+        ]
+    },
+    {
+        "id": "2135046b301ea555",
+        "type": "switch",
+        "z": "174d33dd188055cb",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Hot Side",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Cold Side",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "pH Meter",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "DO2 Meter",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 4,
+        "x": 270,
+        "y": 260,
+        "wires": [
+            [
+                "100f531fcd8841be"
+            ],
+            [
+                "e4318d557af535a3"
+            ],
+            [
+                "a5e68e194ffec01b"
+            ],
+            [
+                "0c884909cb08aaf1"
+            ]
+        ]
+    },
+    {
+        "id": "a17506d480133cda",
+        "type": "mqtt out",
+        "z": "174d33dd188055cb",
+        "name": "",
+        "topic": "BSB/Configure",
+        "qos": "2",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "f63735ef39c7ebd8",
+        "x": 780,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "100f531fcd8841be",
+        "type": "change",
+        "z": "174d33dd188055cb",
+        "name": "Hot Side",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{\"Hot Side\":[{\"Topic\":\"BSB/HLT-Pump\",\"GPIO\":4,\"Type\":\"PWM\"},{\"Topic\":\"BSB/Sparge-Pump\",\"GPIO\":2,\"Type\":\"PWM\"},{\"Topic\":\"BSB/Whirlpool-Pump\",\"GPIO\":12,\"Type\":\"PWM\"},{\"Topic\":\"BSB/HLT-Element\",\"GPIO\":26,\"Type\":\"Digital-Out\"},{\"Topic\":\"BSB/Kettle-Element\",\"GPIO\":25,\"Type\":\"Digital-Out\"},{\"Topic\":\"BSB/HLT-Flow\",\"GPIO\":13,\"Type\":\"Counter\"},{\"Topic\":\"BSB/Kettle-Flow\",\"GPIO\":14,\"Type\":\"Counter\"},{\"Topic\":\"BSB/HLT-Temp\",\"Index\":0,\"Type\":\"Onewire\"},{\"Topic\":\"BSB/Mash-Temp\",\"Index\":1,\"Type\":\"Onewire\"},{\"Topic\":\"BSB/Kettle-Temp\",\"Index\":2,\"Type\":\"Onewire\"}]}",
+                "tot": "json"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 500,
+        "y": 200,
+        "wires": [
+            [
+                "a17506d480133cda"
+            ]
+        ]
+    },
+    {
+        "id": "e4318d557af535a3",
+        "type": "change",
+        "z": "174d33dd188055cb",
+        "name": "Cold Side",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{\"Cold Side\":[{\"Topic\":\"BSB/Unitank-1-Temp\",\"Index\":1,\"Type\":\"Onewire\"},{\"Topic\":\"BSB/Unitank-2-Temp\",\"Index\":0,\"Type\":\"Onewire\"},{\"Topic\":\"BSB/Unitank-1-Heat\",\"GPIO\":27,\"Type\":\"Digital-Out\"},{\"Topic\":\"BSB/Unitank-2-Heat\",\"GPIO\":15,\"Type\":\"Digital-Out\"},{\"Topic\":\"BSB/Unitank-1-Cool\",\"GPIO\":25,\"Type\":\"Digital-Out\"},{\"Topic\":\"BSB/Unitank-2-Cool\",\"GPIO\":14,\"Type\":\"Digital-Out\"},{\"Topic\":\"BSB/Blue-Tilt\",\"Index\":5,\"Type\":\"Tilt\"},{\"Topic\":\"BSB/Purple-Tilt\",\"Index\":3,\"Type\":\"Tilt\"}]}",
+                "tot": "json"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 500,
+        "y": 240,
+        "wires": [
+            [
+                "a17506d480133cda"
+            ]
+        ]
+    },
+    {
+        "id": "a5e68e194ffec01b",
+        "type": "change",
+        "z": "174d33dd188055cb",
+        "name": "pH Meter",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{\"pH Meter\":[{\"Type\":\"Atlas\",\"Rx\":26,\"Tx\":27,\"Topic\":\"BSB/Mash-pH\",\"Command\":\"BSB/Command-pH\"}]}",
+                "tot": "json"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 500,
+        "y": 280,
+        "wires": [
+            [
+                "a17506d480133cda"
+            ]
+        ]
+    },
+    {
+        "id": "0c884909cb08aaf1",
+        "type": "change",
+        "z": "174d33dd188055cb",
+        "name": "DO2 Meter",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{\"DO2 Meter\":[{\"Type\":\"Atlas\",\"Rx\":23,\"Tx\":22,\"Topic\":\"BSB/DO2\",\"Command\":\"BSB/Command-DO2\"}]}",
+                "tot": "json"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 510,
+        "y": 320,
+        "wires": [
+            [
+                "a17506d480133cda"
+            ]
+        ]
+    },
+    {
+        "id": "c2d2e4d4091598bd",
+        "type": "mqtt in",
+        "z": "174d33dd188055cb",
+        "name": "",
+        "topic": "BSB/Online",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "f63735ef39c7ebd8",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 110,
+        "y": 440,
+        "wires": [
+            [
+                "6dd69b7a2d2bdbc7"
+            ]
+        ]
+    },
+    {
+        "id": "c26a9ba3613731ac",
+        "type": "ui_text",
+        "z": "174d33dd188055cb",
+        "group": "bcb3e320136b061c",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "{{msg.topic}}",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 930,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "bd1111ed5c06b60d",
+        "type": "timer-node",
+        "z": "174d33dd188055cb",
+        "name": "Hot Side",
+        "topic": "",
+        "timer": "5",
+        "payloadOn": "Connected",
+        "payloadOnType": "str",
+        "payloadOff": "Disconnected",
+        "payloadOffType": "str",
+        "x": 740,
+        "y": 340,
+        "wires": [
+            [
+                "c26a9ba3613731ac"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "6dd69b7a2d2bdbc7",
+        "type": "change",
+        "z": "174d33dd188055cb",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "true",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 300,
+        "y": 440,
+        "wires": [
+            [
+                "81950c8fd2d2de6f"
+            ]
+        ]
+    },
+    {
+        "id": "8044d6f98d0951dc",
+        "type": "timer-node",
+        "z": "174d33dd188055cb",
+        "name": "Cold Side",
+        "topic": "",
+        "timer": "5",
+        "payloadOn": "Connected",
+        "payloadOnType": "str",
+        "payloadOff": "Disconnected",
+        "payloadOffType": "str",
+        "x": 740,
+        "y": 400,
+        "wires": [
+            [
+                "8cefda9dfdf40680"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "e131c985a4e3c249",
+        "type": "timer-node",
+        "z": "174d33dd188055cb",
+        "name": "pH Meter",
+        "topic": "",
+        "timer": "5",
+        "payloadOn": "Connected",
+        "payloadOnType": "str",
+        "payloadOff": "Disconnected",
+        "payloadOffType": "str",
+        "x": 740,
+        "y": 460,
+        "wires": [
+            [
+                "c491b097efab1b3d"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "95cf6c5166e12cc7",
+        "type": "timer-node",
+        "z": "174d33dd188055cb",
+        "name": "DO Meter",
+        "topic": "",
+        "timer": "5",
+        "payloadOn": "Connected",
+        "payloadOnType": "str",
+        "payloadOff": "Disconnected",
+        "payloadOffType": "str",
+        "x": 740,
+        "y": 520,
+        "wires": [
+            [
+                "fbfd5e08c7557ded"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "8cefda9dfdf40680",
+        "type": "ui_text",
+        "z": "174d33dd188055cb",
+        "group": "bcb3e320136b061c",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "{{msg.topic}}",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 930,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "c491b097efab1b3d",
+        "type": "ui_text",
+        "z": "174d33dd188055cb",
+        "group": "bcb3e320136b061c",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "{{msg.topic}}",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 930,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "fbfd5e08c7557ded",
+        "type": "ui_text",
+        "z": "174d33dd188055cb",
+        "group": "bcb3e320136b061c",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "{{msg.topic}}",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 930,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "d4665205c128173f",
+        "type": "mqtt in",
+        "z": "174d33dd188055cb",
+        "name": "",
+        "topic": "BSB/Console",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "f63735ef39c7ebd8",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 110,
+        "y": 120,
+        "wires": [
+            [
+                "17a42320e2231f9d"
+            ]
+        ]
+    },
+    {
+        "id": "17a42320e2231f9d",
+        "type": "debug",
+        "z": "174d33dd188055cb",
+        "name": "BSB Console",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 330,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "81950c8fd2d2de6f",
+        "type": "switch",
+        "z": "174d33dd188055cb",
+        "name": "",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Hot Side",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Cold Side",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "pH Meter",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "DO2 Meter",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 4,
+        "x": 490,
+        "y": 440,
+        "wires": [
+            [
+                "bd1111ed5c06b60d"
+            ],
+            [
+                "8044d6f98d0951dc"
+            ],
+            [
+                "e131c985a4e3c249"
+            ],
+            [
+                "95cf6c5166e12cc7"
+            ]
+        ]
+    },
+    {
+        "id": "f63735ef39c7ebd8",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "localhost",
+        "port": "8883",
+        "tls": "5512bccb83d223a1",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": true,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "bcb3e320136b061c",
+        "type": "ui_group",
+        "name": "Interfaces",
+        "tab": "07536b665f984120",
+        "order": 1,
+        "disp": true,
+        "width": 7,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "5512bccb83d223a1",
+        "type": "tls-config",
+        "name": "",
+        "cert": "/home/bsb/source/tools/TLS/bsb.crt",
+        "key": "/home/bsb/source/tools/TLS/bsb.key",
+        "ca": "/home/bsb/source/tools/TLS/ca.crt",
+        "certname": "",
+        "keyname": "",
+        "caname": "",
+        "servername": "",
+        "verifyservercert": false,
+        "alpnprotocol": ""
+    },
+    {
+        "id": "07536b665f984120",
+        "type": "ui_tab",
+        "name": "Interfaces",
+        "icon": "dashboard",
+        "order": 3,
+        "disabled": false,
+        "hidden": false
+    }
+]

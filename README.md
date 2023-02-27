@@ -37,6 +37,7 @@ Installtion involves the following steps presented in detail below. In addition 
 * Follow the instuctions for installing [Ubuntu-Server](https://ubuntu.com/tutorials/how-to-install-ubuntu-on-your-raspberry-pi#1-overview) using the RaspPi Imager.
 * Next, perform the steps here for installing [Node-Red](https://nodered.org/docs/getting-started/raspberrypi)
 * Run ```sudo apt install mosquitto mosquitto-clients``` to install the Mosquitto MQTT broker.
+* Run ```sudo systemctl enable mosquitto``` to automatically run Mosquitto on system restart.
 
 ## Configure and Secure Mosquitto (optional)
 Many tutorials on running Mosquitto on a local network use username/password authentication 'in the open'. While this may be low'ish risk for a private network, most would prefer not to have authentication params flying around wirelessly in plain text. The steps below configure MQTT to use certificate authentication and TLS encryption. If this is configured, then you must also copy the certs into the firmware configuration file when building (more on this later). Node-Red also needs to have the cert files but this is relaively trivial to configure. 
@@ -47,17 +48,47 @@ Many tutorials on running Mosquitto on a local network use username/password aut
 * Edit /etc/mosquitto/conf.d/default.conf to point at the cert files and enable required certificates. An example is provided in this repo under Mosquitto.
 * Restart Mosquitto using ```sudo service mosquitto restart```
 * Generate the client certs by running ```generate-CA.sh client [name]```. Name can be anything but it must not be empty.
-* ca.crt, ```[name].key``` and ```[name].crt``` are needed for both Node-Red's MQTT configuration and the BSB firmware. More on this later. 
+* ```ca.crt```, ```[name].key``` and ```[name].crt``` are needed for both Node-Red's MQTT configuration and the BSB firmware. More on this later.
+    - Never share the crt or key files.
 
 ## Building the BSB Firmware
 The firmware has only been tested on an ESP32 board and the 'helper' script referenced below assumes such a device.
 
 * Download arduino-cli from https://arduino.github.io/arduino-cli/0.20/installation/
 * On the command line, navigate to Firmware_ESP32 and copy arduino-cli here
-* Edit Firmware_ESP32/Config.h to configure your device's name, WiFi parameters and SSL/TLS certs if applicable.
+* Edit Firmware_ESP32/Config.h to configure your WiFi name and password. Also set DEVICE_NAME to uniquely identify the ESP32 board.
+    - If secure MQTT is used, the content of the cert files created above can simply be pasted into the matching char arrays.
+    - Ensure USE_SECURE_TCP is defined (default).
 * Run `arduino-cli board list` with the board plugged in and unplugged to determine the port.
 * On Windows, edit build.bat to set the port and then run built.bat from within Firmware_ESP32
-* For other operating systems, use build.bat as a reference for what commands to run.  
+* For other operating systems, use build.bat as a reference for what commands to run.
+
+## Configuring Node-Red and Talking to the Firmware
+
+* Open a browser and navigate to the IP address of your Node-Red instance on port 1880; i.e. http://192.168.0.10:1880.
+* Import the Node-Red flow called Interfaces.json under NodeRed in this repository (ctrl-i). It should appear as below.
+
+![BSB Config](screen_captures/configuration.png)
+
+This flow handles three MQTT messages published by the BSB firmware; Console, Register and Online. The Console message will contain error and diagnostic information printed to Node-Red's debug console. Register is sent by the firmware at boot and Online is sent every 3 seconds to indecate the interface is live. This flow handles 4 interfaces to demonstrate how to configure multiple ESP32 boards. For now, lets configure just one. 
+
+* Double click the yellow 'Hot Side' sswitch node and rename it to match your DEVICE_NAME set in Config.h.
+* Click the ellipse ```...``` under Rules and change the label ```Hot Side``` to match DEVICE_NAME as well.
+    - For now, leave the JSON as is. This is discussed later.
+* Commit those changes and double click the ```Which Device?``` node, replacing ```Hot Side``` with DEVICE_NAME.
+* Do the same step for the ```Online``` node.
+* Finally, change the name of the orange timer node ```Hot Side``` to match DEVICE_NAME for cleanliness.
+
+If using secure MQTTT, follow the additional steps below.
+
+* Double click on of the MQTT message nodes on the flow.
+* Click the pencil icon next to the Server field.
+* Click the pencil icon netx to TLS Configuration.
+* Enter the paths of your ```client``` ca.cert, key and crt files.
+
+Now click the red ```deploy``` button to publish the changes. Assuming MQTT is configured correctly, the purple MQTT nodes should show a connected state. If not, double click one of them and review the settings. Apply power to your ESP32 interface that's running the BSB firmware. Within a few seconds, the orange timer node you configured should show a green state and begin counting down from 5 while resetting every 3 seconds. You can further customize this flow to match the number of devices you'll actually be using. 
+
+Lastly, navigate to your Node-Red instance's Dashbaord by appendding ```/ui``` to the address; e.g. ```http://192.168.0.10:1880/ui```. You should see an Interfaces tab reflecting the online state of your ESP32 baord. Congrats, you have a working Blue Screen Brewery platform! Next, we'll cover how to configure the interface using the JSON in the yellow switch node we edited above.
 
 ## Firmware Configuration
 When the BSB firmware boots, it sends the MQTT message 'BSB/Register'. Node-Red listens for this event and responds with 'BSB/Configure' which contains JSON describing the
@@ -113,12 +144,6 @@ the MQTT message name to bind the device. The meaning of Index depends on the de
     ]
 }
 ```
-
-The image below is an example in Node-Red of supporting four Ardunino devices all with a different configuration. The incoming Register message on the left flows to a Switch node
-that routes the message based on the DEVICE_NAME in the payload to the matching Change node. The Change node sets the msg.payload to the approprate JSON and broadcasts it via the
-Configure message. The target device reads the configuration and begins listening/publishing as instructed.
-
-![BSB Config](screen_captures/configuration.png)
 
 ## Device Types
 These are the valid devices to be used in the configuration 'Type' field(s). Note, the 'Topic' field is always required and denotes the MQTT messsage that will be subscribed to or published on depending on the type. For example, type Digital-In will publish to the Topic while type Digital-Out will subscribe to the Topic. 
@@ -176,3 +201,6 @@ These are the valid devices to be used in the configuration 'Type' field(s). Not
 | 5                                         | Blue                                       |
 | 6                                         | Yellow                                     |
 | 7                                         | Pink                                       |
+
+# Next Steps
+Now it's just a matter of building Node-Red flows that match the needs of your brewery. Additional examples are available in this repository under NodeRed. These can be imported to provide starting points for integration of various device types and external services such as Brewfather. 
