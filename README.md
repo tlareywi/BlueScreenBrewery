@@ -24,7 +24,7 @@ A browser based UI is generated via use of Node-Red Deshboard nodes within the f
 ![BSB UI](screen_captures/BSBHotSide.png)
 
 # Installation
-Installtion involves the following steps presented in detail below. In addition to the machine running Node-Red and MQTT, any number of Arduino ESP32 boards are needed to run the BSB firmware and integrate the actual hardware devices in the brewery; e.g. pumps, SSRs, etc. This document does not cover building a hardware control panel; just the software/firmware side is considerded.
+The steps below present the high level steps. Each step is covered in further detail in proceeding sections. In addition to the machine running Node-Red and MQTT, any number of Arduino ESP32 boards are needed to run the BSB firmware and integrate the actual hardware devices in the brewery; e.g. pumps, SSRs, etc. This document does not cover building a hardware control panel; just the software/firmware side is considerded.
 
 * Install Node-Red and an MQTT broker on a supported machine. We'll cover Raspberry Pi below but it could be Windows, Mac or even in the cloud.
 * Configure MQTT to use SSL/TLS. Technically optional, but secures communication between Node-Red and your Arduino controllers.
@@ -39,7 +39,7 @@ Installtion involves the following steps presented in detail below. In addition 
 * Run ```sudo apt install mosquitto mosquitto-clients``` to install the Mosquitto MQTT broker.
 * Run ```sudo systemctl enable mosquitto``` to automatically run Mosquitto on system restart.
 
-## Configure and Secure Mosquitto (optional)
+## Configure and Secure Mosquitto (recommended)
 Many tutorials on running Mosquitto on a local network use username/password authentication 'in the open'. While this may be low'ish risk for a private network, most would prefer not to have authentication params flying around wirelessly in plain text. The steps below configure MQTT to use certificate authentication and TLS encryption. If this is configured, then you must also copy the certs into the firmware configuration file when building (more on this later). Node-Red also needs to have the cert files but this is relaively trivial to configure. 
 
 * On the Node-Red/MQTT machine, download this script [generate-CA.sh](https://github.com/owntracks/tools/tree/master/TLS).
