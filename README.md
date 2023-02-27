@@ -14,7 +14,7 @@ A sophisticated system for brewery automation built around [Node-Red](https://no
 Still in the early stages of development. Supported devices, interfaces and various other aspects of the code are open to change as new requirements are discovered, feedback from other users is considered, etc. That said, I already run this in my own brewery which is generally 'always on'. Key components levergaged, such as Node-Red and Mosquitto, are already stable. The firmmware was a ground up effort and almost certainly contains bugs, but seems stable enough for home brewery use (i.e. has been tested with lengthy up-time over weeks).   
 
 ## Architecture
-The center of the system is the Node-Red instance running on any supported platform; Windows, MacOS, Rasp-Pi, Azure cloud, etc. The MQTT broker is generally, but not necessarily, installed on the same machine. For convinience, a pre-configured Rasp-Pi image is available for download (TODO) which provides a working Node-Red and MQTT installtion. Node-Red communicates with any number of Arduino boards (ESP32) via MQTT to controll attached devices, read from sensors, etc. The firmware is common between all Arduino devices and configured dynamically via messages from Node-Red. More on this in the details below.
+The center of the system is the Node-Red instance running on any supported platform; Windows, MacOS, Rasp-Pi, Azure cloud, etc. The MQTT broker is generally, but not necessarily, installed on the same machine. Node-Red communicates with any number of Arduino boards (ESP32) via MQTT to controll attached devices, read from sensors, etc. The firmware is common between all Arduino devices and configured dynamically via messages from Node-Red. More on this in the details below.
 
 ![BSB Arch](screen_captures/BlueScreenBrewery.png)
 
@@ -81,7 +81,7 @@ This flow handles three MQTT messages published by the BSB firmware; Console, Re
 
 If using secure MQTTT, follow the additional steps below.
 
-* Double click on of the MQTT message nodes on the flow.
+* Double click one of the MQTT message nodes in the flow.
 * Click the pencil icon next to the Server field.
 * Click the pencil icon netx to TLS Configuration.
 * Enter the paths of your ```client``` ca.cert, key and crt files.
