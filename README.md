@@ -56,9 +56,10 @@ The firmware has only been tested on an ESP32 board and the 'helper' script refe
 
 * Download arduino-cli from https://arduino.github.io/arduino-cli/0.20/installation/
 * On the command line, navigate to Firmware_ESP32 and copy arduino-cli here
-* Edit Firmware_ESP32/Config.h to configure your WiFi name and password. Also set DEVICE_NAME to uniquely identify the ESP32 board.
+* Edit the following values in Firmware_ESP32/Config.h.
+    - DEVICE_NAME to uniquely identify the ESP32 board.
+    - WiFi name and password.
     - If secure MQTT is used, the content of the cert files created above can simply be pasted into the matching char arrays.
-    - Ensure USE_SECURE_TCP is defined (default).
 * Run `arduino-cli board list` with the board plugged in and unplugged to determine the port.
 * On Windows, edit build.bat to set the port and then run built.bat from within Firmware_ESP32
 * For other operating systems, use build.bat as a reference for what commands to run.
