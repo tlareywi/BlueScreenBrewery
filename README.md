@@ -14,7 +14,7 @@ A sophisticated system for brewery automation built around [Node-Red](https://no
 Still in the early stages of development. Supported devices, interfaces and various other aspects of the code are open to change as new requirements are discovered, feedback from other users is considered, etc. That said, I already run this in my own brewery which is generally 'always on'. Key components levergaged, such as Node-Red and Mosquitto, are already stable. The firmmware was a ground up effort and almost certainly contains bugs, but seems stable enough for home brewery use (i.e. has been tested with lengthy up-time over weeks).   
 
 ## Architecture
-The center of the system is the Node-Red instance running on any supported platform; Windows, MacOS, Rasp-Pi, Azure cloud, etc. The MQTT broker is generally, but not necessarily, installed on the same machine. For convinience, a pre-configured Rasp-Pi image is available for download (TODO) which provides a working Node-Red and MQTT installtion. Node-Red communicates with any number of Arduino boards (ESP32) via MQTT to controll attached devices, read from sensors, etc. The firmware is common between all Arduino devices and configured dynamically via messages from Node-Red. More on this in the details below.
+The center of the system is the Node-Red instance running on any supported platform; Windows, MacOS, Rasp-Pi, Azure cloud, etc. The MQTT broker is generally, but not necessarily, installed on the same machine. Node-Red communicates with any number of Arduino boards (ESP32) via MQTT to controll attached devices, read from sensors, etc. The firmware is common between all Arduino devices and configured dynamically via messages from Node-Red. More on this in the details below.
 
 ![BSB Arch](screen_captures/BlueScreenBrewery.png)
 
@@ -24,7 +24,7 @@ A browser based UI is generated via use of Node-Red Deshboard nodes within the f
 ![BSB UI](screen_captures/BSBHotSide.png)
 
 # Installation
-Installtion involves the following steps presented in detail below. In addition to the machine running Node-Red and MQTT, any number of Arduino ESP32 boards are needed to run the BSB firmware and integrate the actual hardware devices in the brewery; e.g. pumps, SSRs, etc. This document does not cover building a hardware control panel; just the software/firmware side is considerded.
+The steps below present the high level steps. Each step is covered in further detail in proceeding sections. In addition to the machine running Node-Red and MQTT, any number of Arduino ESP32 boards are needed to run the BSB firmware and integrate the actual hardware devices in the brewery; e.g. pumps, SSRs, etc. This document does not cover building a hardware control panel; just the software/firmware side is considerded.
 
 * Install Node-Red and an MQTT broker on a supported machine. We'll cover Raspberry Pi below but it could be Windows, Mac or even in the cloud.
 * Configure MQTT to use SSL/TLS. Technically optional, but secures communication between Node-Red and your Arduino controllers.
@@ -39,7 +39,7 @@ Installtion involves the following steps presented in detail below. In addition 
 * Run ```sudo apt install mosquitto mosquitto-clients``` to install the Mosquitto MQTT broker.
 * Run ```sudo systemctl enable mosquitto``` to automatically run Mosquitto on system restart.
 
-## Configure and Secure Mosquitto (optional)
+## Configure and Secure Mosquitto (recommended)
 Many tutorials on running Mosquitto on a local network use username/password authentication 'in the open'. While this may be low'ish risk for a private network, most would prefer not to have authentication params flying around wirelessly in plain text. The steps below configure MQTT to use certificate authentication and TLS encryption. If this is configured, then you must also copy the certs into the firmware configuration file when building (more on this later). Node-Red also needs to have the cert files but this is relaively trivial to configure. 
 
 * On the Node-Red/MQTT machine, download this script [generate-CA.sh](https://github.com/owntracks/tools/tree/master/TLS).
@@ -56,9 +56,10 @@ The firmware has only been tested on an ESP32 board and the 'helper' script refe
 
 * Download arduino-cli from https://arduino.github.io/arduino-cli/0.20/installation/
 * On the command line, navigate to Firmware_ESP32 and copy arduino-cli here
-* Edit Firmware_ESP32/Config.h to configure your WiFi name and password. Also set DEVICE_NAME to uniquely identify the ESP32 board.
+* Edit the following values in Firmware_ESP32/Config.h.
+    - DEVICE_NAME to uniquely identify the ESP32 board.
+    - WiFi name and password.
     - If secure MQTT is used, the content of the cert files created above can simply be pasted into the matching char arrays.
-    - Ensure USE_SECURE_TCP is defined (default).
 * Run `arduino-cli board list` with the board plugged in and unplugged to determine the port.
 * On Windows, edit build.bat to set the port and then run built.bat from within Firmware_ESP32
 * For other operating systems, use build.bat as a reference for what commands to run.
@@ -81,7 +82,7 @@ This flow handles three MQTT messages published by the BSB firmware; Console, Re
 
 If using secure MQTTT, follow the additional steps below.
 
-* Double click on of the MQTT message nodes on the flow.
+* Double click one of the MQTT message nodes in the flow.
 * Click the pencil icon next to the Server field.
 * Click the pencil icon netx to TLS Configuration.
 * Enter the paths of your ```client``` ca.cert, key and crt files.
