@@ -128,14 +128,18 @@ void initTopicMappings( const String& payload ) {
 
     if ( type == PSTR("Digital-Out") ) {
       unsigned int GPIO = mapping[PSTR("GPIO")];
+      bool activeLow = mapping[PSTR("Active-Low")];
       pinMode(GPIO, OUTPUT);
-      digitalWrite(GPIO, HIGH);
+      if( activeLow )
+        digitalWrite(GPIO, HIGH);
+      else
+        digitalWrite(GPIO, LOW);
       
-      mqtt.subscribe(topic, [GPIO](const String & payload, const size_t size) {
+      mqtt.subscribe(topic, [GPIO, activeLow](const String & payload, const size_t size) {
         if ( payload.toInt() )
-          digitalWrite(GPIO, LOW);
+          digitalWrite(GPIO, activeLow ? LOW : HIGH );
         else 
-          digitalWrite(GPIO, HIGH);
+          digitalWrite(GPIO, activeLow ? HIGH : LOW );
       });
     }
     else if ( type == PSTR("PWM") ) {

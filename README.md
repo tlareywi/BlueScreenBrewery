@@ -91,12 +91,7 @@ Now click the red ```deploy``` button to publish the changes. Assuming MQTT is c
 Lastly, navigate to your Node-Red instance's Dashbaord by appendding ```/ui``` to the address; e.g. ```http://192.168.0.10:1880/ui```. You should see an Interfaces tab reflecting the online state of your ESP32 baord. Congrats, you have a working Blue Screen Brewery platform! Next, we'll cover how to configure the interface using the JSON in the yellow switch node we edited above.
 
 ## Firmware Configuration
-When the BSB firmware boots, it sends the MQTT message 'BSB/Register'. Node-Red listens for this event and responds with 'BSB/Configure' which contains JSON describing the
-device types and mappings between MQTT messages and Arduino pin state. For example, suppose Config.h is edited so the DEVICE_NAME is 'Cold Side'. When this device boots, it
-will send the 'BSB/Register' message with the payload 'Cold Side'. Node-Red receives this message and chooses the JSON to send based on the device name payload. Node-Red sends 
-the 'BSB/Configure' message with the following JSON payload, which defines two Onewire sensors, two DC heating pads, two DC pumps and two Tilt sensors. The Topic field defines
-the MQTT message name to bind the device. The meaning of Index depends on the device type, both of which are documented below. It's important the label, in this case
-'Cold Side', matches the DEVICE_NAME in Config.h or the configuration will be ignored. This facilitates many devices running in parallel without stepping on each other. 
+When the BSB firmware boots, it sends the MQTT message 'BSB/Register'. Node-Red listens for this event and responds with 'BSB/Configure' which contains JSON describing the device types and mappings between MQTT messages and Arduino pin state. For example, suppose Config.h is edited so the DEVICE_NAME is 'Cold Side'. When this device boots, it will send the 'BSB/Register' message with the payload 'Cold Side'. Node-Red receives this message and chooses the JSON to send based on the device name payload. Node-Red sends  the 'BSB/Configure' message with the following JSON payload, which defines two Onewire sensors, two DC heating pads, two DC pumps and two Tilt sensors. The Topic field defines the MQTT message name to bind the device. The meaning of Index depends on the device type, both of which are documented below. It's important the label, in this case 'Cold Side', matches the DEVICE_NAME in Config.h or the configuration will be ignored. This facilitates many devices running in parallel without stepping on each other. 
 
 ```javascript
 {
@@ -154,8 +149,9 @@ These are the valid devices to be used in the configuration 'Type' field(s). Not
 
 
 * **Digital-Out** - Writes a binary value, 0 or 1, to the pin given in the GPIO field. Used to control on/off devices such as some types of pumps and heaters. Node-Red flows can modulate this state over time to implement a 'Duty Cycle' to control devices such as AC heaters attached to solid state relays.
-    - Topic - Required. Set payload to 0 or 1.
-    - GPIO  - Required.
+    - Topic      - Required. Set payload to 0 or 1.
+    - GPIO       - Required.
+    - Active-Low - Optional. Set to true for devices where 0 is interpreted as 'on', as is sometimes the case for relay modules. Default value is false.
 
 
 * **PWM**         - Pulse width modulation. A digital signal pulsed at a high frequency. Can be used to vary power directly to low voltage devices; e.g . dim an LED, or vary a higher voltage analog signal with some additional hardware. A common application is to vary the flow rate of DC pumps. Advanced users can change the frequency and resolution in Config.h as desired.
@@ -164,7 +160,7 @@ These are the valid devices to be used in the configuration 'Type' field(s). Not
 
 
 * **Analog-In**   - Performs an analog value read from the associated GPIO pin. The message is broadcast whenever the value changes.
-    - Topic - Required. Set payload to an integer value.
+    - Topic - Required. Payload is set to an integer value.
     - GPIO  - Required.
 
 
@@ -203,4 +199,4 @@ These are the valid devices to be used in the configuration 'Type' field(s). Not
 | 7                                         | Pink                                       |
 
 # Next Steps
-Now it's just a matter of building Node-Red flows that match the needs of your brewery. Additional examples are available in this repository under NodeRed. These can be imported to provide starting points for integration of various device types and external services such as Brewfather. 
+Now it's just a matter of building Node-Red flows that match the needs of your brewery. Additional examples are available in this repository under NodeRed. These can be imported to provide starting points for integration of various device types and external services such as Brewfather. Reference the README in the NodeRed directory for additional documentation for the example flows. Happy brewing!

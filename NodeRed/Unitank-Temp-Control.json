@@ -1,0 +1,396 @@
+[
+    {
+        "id": "5d8a8a202caf8247",
+        "type": "tab",
+        "label": "Unitank-Temp-Control",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "f2ea0804debda467",
+        "type": "ui_gauge",
+        "z": "5d8a8a202caf8247",
+        "name": "",
+        "group": "f6f4b5041b80b6fd",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Temp",
+        "label": "F",
+        "format": "{{value}}",
+        "min": "32",
+        "max": "100",
+        "colors": [
+            "#005cb3",
+            "#4bce00",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 470,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "3cb7de6bae194c05",
+        "type": "ui_text_input",
+        "z": "5d8a8a202caf8247",
+        "name": "",
+        "label": "Temp Ceil",
+        "tooltip": "",
+        "group": "f6f4b5041b80b6fd",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "Ceil",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "str",
+        "x": 260,
+        "y": 140,
+        "wires": [
+            [
+                "a29b8904973d57f1"
+            ]
+        ]
+    },
+    {
+        "id": "f237055a44114379",
+        "type": "ui_text_input",
+        "z": "5d8a8a202caf8247",
+        "name": "",
+        "label": "Temp Floor",
+        "tooltip": "",
+        "group": "f6f4b5041b80b6fd",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "Floor",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "str",
+        "x": 250,
+        "y": 180,
+        "wires": [
+            [
+                "a29b8904973d57f1"
+            ]
+        ]
+    },
+    {
+        "id": "a29b8904973d57f1",
+        "type": "function",
+        "z": "5d8a8a202caf8247",
+        "name": "Range Controller",
+        "func": "var ceil = context.get(\"Ceil\");\nvar floor = context.get(\"Floor\");\nvar temp = context.get(\"Temp\");\nvar enabled = context.get(\"Enabled\");\n\nvar heating = { \"payload\": 0 };\nvar cooling = { \"payload\": 0 };\n\nif( msg.topic == 'Ceil' ) {\n    ceil = msg.payload;\n    context.set(\"Ceil\", ceil);\n}\nelse if (msg.topic == 'Floor') {\n    floor = msg.payload;\n    context.set(\"Floor\", floor);\n}\nelse if( msg.topic == 'Enabled') {\n    enabled = msg.payload;\n    context.set(\"Enabled\", enabled); \n}\nelse {\n    temp = msg.payload;\n    context.set(\"Temp\", temp);\n}\n\nif( enabled ) {\n    if( temp < floor )\n        heating = { \"payload\": 1 };\n    else if( temp > floor + 0.5 )\n        heating = { \"payload\": 0 };\n\n    if( temp > ceil )\n        cooling = { \"payload\": 1 }\n    else if( temp < ceil - 0.5 )\n        cooling = { \"payload\": 0 }\n}\nelse {\n    heating = { \"payload\": 0 };\n    cooling = { \"payload\": 0 };   \n}\n\nreturn [heating, cooling];",
+        "outputs": 2,
+        "noerr": 0,
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\ncontext.set(\"Ceil\", 200);\ncontext.set(\"Floor\", -200);\ncontext.set(\"Temp\", 0);\ncontext.set(\"Enabled\", false);",
+        "finalize": "",
+        "libs": [],
+        "x": 510,
+        "y": 180,
+        "wires": [
+            [
+                "43d20a511134b425",
+                "c498d3e30a37113c"
+            ],
+            [
+                "922ba66eee9dbc51",
+                "b76c8a278fa05917"
+            ]
+        ]
+    },
+    {
+        "id": "8b4980129be94b8c",
+        "type": "mqtt out",
+        "z": "5d8a8a202caf8247",
+        "name": "",
+        "topic": "BSB/Unitank-1-Heat",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "f63735ef39c7ebd8",
+        "x": 880,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "4abc83619738eb67",
+        "type": "mqtt out",
+        "z": "5d8a8a202caf8247",
+        "name": "",
+        "topic": "BSB/Unitank-1-Cool",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "f63735ef39c7ebd8",
+        "x": 880,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "43d20a511134b425",
+        "type": "rbe",
+        "z": "5d8a8a202caf8247",
+        "name": "",
+        "func": "rbei",
+        "gap": "",
+        "start": "",
+        "inout": "out",
+        "septopics": true,
+        "property": "payload",
+        "topi": "topic",
+        "x": 690,
+        "y": 140,
+        "wires": [
+            [
+                "8b4980129be94b8c"
+            ]
+        ]
+    },
+    {
+        "id": "922ba66eee9dbc51",
+        "type": "rbe",
+        "z": "5d8a8a202caf8247",
+        "name": "",
+        "func": "rbei",
+        "gap": "",
+        "start": "",
+        "inout": "out",
+        "septopics": true,
+        "property": "payload",
+        "topi": "topic",
+        "x": 690,
+        "y": 220,
+        "wires": [
+            [
+                "4abc83619738eb67"
+            ]
+        ]
+    },
+    {
+        "id": "c498d3e30a37113c",
+        "type": "ui_led",
+        "z": "5d8a8a202caf8247",
+        "order": 5,
+        "group": "f6f4b5041b80b6fd",
+        "width": 0,
+        "height": 0,
+        "label": "Heating",
+        "labelPlacement": "left",
+        "labelAlignment": "left",
+        "colorForValue": [
+            {
+                "color": "#ff0000",
+                "value": "0",
+                "valueType": "num"
+            },
+            {
+                "color": "#008000",
+                "value": "1",
+                "valueType": "num"
+            }
+        ],
+        "allowColorForValueInMessage": false,
+        "shape": "circle",
+        "showGlow": true,
+        "name": "",
+        "x": 650,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "b76c8a278fa05917",
+        "type": "ui_led",
+        "z": "5d8a8a202caf8247",
+        "order": 6,
+        "group": "f6f4b5041b80b6fd",
+        "width": 0,
+        "height": 0,
+        "label": "Cooling",
+        "labelPlacement": "left",
+        "labelAlignment": "left",
+        "colorForValue": [
+            {
+                "color": "#ff0000",
+                "value": "0",
+                "valueType": "num"
+            },
+            {
+                "color": "#008000",
+                "value": "1",
+                "valueType": "num"
+            }
+        ],
+        "allowColorForValueInMessage": false,
+        "shape": "circle",
+        "showGlow": true,
+        "name": "",
+        "x": 650,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "0aedcdc684d37a5f",
+        "type": "mqtt in",
+        "z": "5d8a8a202caf8247",
+        "name": "",
+        "topic": "BSB/Unitank-1-Temp",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "f63735ef39c7ebd8",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 180,
+        "y": 220,
+        "wires": [
+            [
+                "f2ea0804debda467",
+                "a29b8904973d57f1",
+                "c7e4d717f8191943"
+            ]
+        ]
+    },
+    {
+        "id": "254b8b5732754b52",
+        "type": "ui_switch",
+        "z": "5d8a8a202caf8247",
+        "name": "",
+        "label": "Enabled",
+        "tooltip": "",
+        "group": "f6f4b5041b80b6fd",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "decouple": "false",
+        "topic": "Enabled",
+        "topicType": "str",
+        "style": "",
+        "onvalue": "true",
+        "onvalueType": "bool",
+        "onicon": "",
+        "oncolor": "",
+        "offvalue": "false",
+        "offvalueType": "bool",
+        "officon": "",
+        "offcolor": "",
+        "animate": false,
+        "className": "",
+        "x": 260,
+        "y": 80,
+        "wires": [
+            [
+                "a29b8904973d57f1"
+            ]
+        ]
+    },
+    {
+        "id": "c7e4d717f8191943",
+        "type": "change",
+        "z": "5d8a8a202caf8247",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "Unitank-1-Temp",
+                "pt": "flow",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 430,
+        "y": 260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f6f4b5041b80b6fd",
+        "type": "ui_group",
+        "name": "Unitank 1",
+        "tab": "22dc0261fe04a4ea",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "f63735ef39c7ebd8",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "localhost",
+        "port": "8883",
+        "tls": "5512bccb83d223a1",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": true,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "22dc0261fe04a4ea",
+        "type": "ui_tab",
+        "name": "Cold Side",
+        "icon": "dashboard",
+        "order": 2,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "5512bccb83d223a1",
+        "type": "tls-config",
+        "name": "",
+        "cert": "/home/bsb/source/tools/TLS/bsb.crt",
+        "key": "/home/bsb/source/tools/TLS/bsb.key",
+        "ca": "/home/bsb/source/tools/TLS/ca.crt",
+        "certname": "",
+        "keyname": "",
+        "caname": "",
+        "servername": "",
+        "verifyservercert": false,
+        "alpnprotocol": ""
+    }
+]

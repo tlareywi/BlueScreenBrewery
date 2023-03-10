@@ -1,0 +1,282 @@
+[
+    {
+        "id": "80f6d74946a0e975",
+        "type": "tab",
+        "label": "Atlas-pH",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "5bee47a8cb971be2",
+        "type": "ui_text",
+        "z": "80f6d74946a0e975",
+        "group": "045b99aa08e9a93b",
+        "order": 7,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Mash pH:",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "className": "",
+        "x": 540,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "4a71ca3f58770b33",
+        "type": "ui_button",
+        "z": "80f6d74946a0e975",
+        "name": "",
+        "group": "045b99aa08e9a93b",
+        "order": 8,
+        "width": "2",
+        "height": "1",
+        "passthru": false,
+        "label": "Cal 7.0",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "Cal,mid,7.00",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 140,
+        "y": 120,
+        "wires": [
+            [
+                "9bcbfe561a369f8b"
+            ]
+        ]
+    },
+    {
+        "id": "9bcbfe561a369f8b",
+        "type": "mqtt out",
+        "z": "80f6d74946a0e975",
+        "name": "",
+        "topic": "BSB/Command-pH",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "f63735ef39c7ebd8",
+        "x": 370,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "5cefdf98e61fdf1d",
+        "type": "mqtt in",
+        "z": "80f6d74946a0e975",
+        "name": "",
+        "topic": "BSB/Mash-pH",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "f63735ef39c7ebd8",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 350,
+        "y": 220,
+        "wires": [
+            [
+                "5bee47a8cb971be2"
+            ]
+        ]
+    },
+    {
+        "id": "e7b7e443bf0bdee3",
+        "type": "inject",
+        "z": "80f6d74946a0e975",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "10",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "MashTemp",
+        "payloadType": "global",
+        "x": 170,
+        "y": 80,
+        "wires": [
+            [
+                "fca0ede779a1efb3"
+            ]
+        ]
+    },
+    {
+        "id": "23d9f0af94f8038a",
+        "type": "mqtt out",
+        "z": "80f6d74946a0e975",
+        "name": "",
+        "topic": "BSB/Command-pH",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "f63735ef39c7ebd8",
+        "x": 550,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "fca0ede779a1efb3",
+        "type": "change",
+        "z": "80f6d74946a0e975",
+        "name": "F to C",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "$string(\"T,\") & $round((payload - 32) * 0.5556, 2)",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 370,
+        "y": 80,
+        "wires": [
+            [
+                "23d9f0af94f8038a"
+            ]
+        ]
+    },
+    {
+        "id": "54b4d9e97e2aa0c7",
+        "type": "ui_button",
+        "z": "80f6d74946a0e975",
+        "name": "",
+        "group": "045b99aa08e9a93b",
+        "order": 9,
+        "width": "2",
+        "height": "1",
+        "passthru": false,
+        "label": "Cal 4.0",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "Cal,low,4.00",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 140,
+        "y": 160,
+        "wires": [
+            [
+                "9bcbfe561a369f8b"
+            ]
+        ]
+    },
+    {
+        "id": "c711672ec477fac8",
+        "type": "ui_button",
+        "z": "80f6d74946a0e975",
+        "name": "",
+        "group": "045b99aa08e9a93b",
+        "order": 10,
+        "width": "2",
+        "height": "1",
+        "passthru": false,
+        "label": "Cal 10.0",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "Cal,high,10.00",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 140,
+        "y": 200,
+        "wires": [
+            [
+                "9bcbfe561a369f8b"
+            ]
+        ]
+    },
+    {
+        "id": "045b99aa08e9a93b",
+        "type": "ui_group",
+        "name": "Mash Tun",
+        "tab": "f37381189b3a454a",
+        "order": 2,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "f63735ef39c7ebd8",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "localhost",
+        "port": "8883",
+        "tls": "5512bccb83d223a1",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": true,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "f37381189b3a454a",
+        "type": "ui_tab",
+        "name": "Hot Side",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "5512bccb83d223a1",
+        "type": "tls-config",
+        "name": "",
+        "cert": "/home/bsb/source/tools/TLS/bsb.crt",
+        "key": "/home/bsb/source/tools/TLS/bsb.key",
+        "ca": "/home/bsb/source/tools/TLS/ca.crt",
+        "certname": "",
+        "keyname": "",
+        "caname": "",
+        "servername": "",
+        "verifyservercert": false,
+        "alpnprotocol": ""
+    }
+]
