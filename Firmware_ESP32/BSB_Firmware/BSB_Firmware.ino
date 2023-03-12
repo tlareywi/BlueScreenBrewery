@@ -40,10 +40,30 @@ WiFiClient client;
 #include <ArduinoJson.h>      // JSON Parser
 #include <MQTTPubSubClient.h> // https://github.com/hideakitai/MQTTPubSubClient
 
+#define MAX_COUNTERS 12
+
 // Globals //////////////////////////////////////////////////////////////////////////////////
 const char consoleTopic[] = PSTR("BSB/Console");
 String deviceId( DEVICE_NAME );
 arduino::mqtt::PubSubClient<MAX_PAYLOAD_SIZE> mqtt;
+volatile unsigned int counters[MAX_COUNTERS];
+unsigned int counterSamples[MAX_COUNTERS];
+unsigned short nextISR = 0;
+void (*counterISRs[])(void) {
+  []{++counters[0];},
+  []{++counters[1];},
+  []{++counters[2];},
+  []{++counters[3];},
+  []{++counters[4];},
+  []{++counters[5];},
+  []{++counters[6];},
+  []{++counters[7];},
+  []{++counters[8];},
+  []{++counters[9];},
+  []{++counters[10];},
+  []{++counters[11];}
+};
+hw_timer_t *counterInterrupt = NULL;
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "OnewireSensor.h"    // OneWire temperature sensor support (optional see Config.h)
@@ -144,14 +164,15 @@ void initTopicMappings( const String& payload ) {
     }
     else if ( type == PSTR("PWM") ) {
       unsigned int GPIO = mapping[PSTR("GPIO")];
+      unsigned int channel = numPWMChannels++;
       pinMode(GPIO, OUTPUT);
-      ledcSetup(numPWMChannels++, PWM_FREQUENCY, PWM_RESOLUTION);
-      ledcAttachPin(GPIO, numPWMChannels);
+      ledcSetup(channel, PWM_FREQUENCY, PWM_RESOLUTION);
+      ledcAttachPin(GPIO, channel);
       
-      mqtt.subscribe(topic, [numPWMChannels](const String & payload, const size_t size) {
+      mqtt.subscribe(topic, [channel](const String & payload, const size_t size) {
         int dutyCyle = payload.toInt();
         if( dutyCyle > -1 && dutyCyle <= MaxPWMDutyCycke )
-          ledcWrite(numPWMChannels, payload.toInt());
+          ledcWrite(channel, payload.toInt());
       });
     }
     else if ( type == PSTR("Analog-In") ) {
@@ -182,23 +203,20 @@ void initTopicMappings( const String& payload ) {
     }
     else if ( type == PSTR("Counter") ) {
       unsigned int GPIO = mapping[PSTR("GPIO")];
+      unsigned short isr = nextISR++;
+      if( isr >= MAX_COUNTERS )
+      {
+        mqtt.publish( consoleTopic, deviceId + PSTR(": Exceeded max number of counters!") );
+        continue;
+      }
       pinMode(GPIO, INPUT);
+      attachInterrupt( digitalPinToInterrupt(GPIO), counterISRs[isr], FALLING );
 
-      publishTopics[numPublishTopics++] = [GPIO, topic]() {
+      publishTopics[numPublishTopics++] = [counterSamples, isr, topic]() {
         static unsigned int clk = millis();
-        static unsigned long counter = 0;
-        static int lastVal = 0;
-        
-        int current = digitalRead( GPIO );
-        if( current > lastVal )
-          ++counter;
-        
-        lastVal = current;
-
-        if ( millis() - clk > 999 ) {
-          mqtt.publish(topic, String(counter));
+        if ( millis() - clk > 750 ) {
+          mqtt.publish(topic, String(counterSamples[isr]));
           clk = millis();
-          counter = 0;
         }
       };
     }
@@ -258,12 +276,23 @@ void initTopicMappings( const String& payload ) {
 }
 
 //
+// Called 'exactly' every second to update counters via timer interrupt.
+//
+void counterSampler()
+{
+  memcpy( counterSamples, (void*)counters, sizeof( unsigned int ) * MAX_COUNTERS );
+  memset( (void*)counters, 0, sizeof( unsigned int ) * MAX_COUNTERS );
+}
+
+//
 // Connect to WiFi and MQTT broker, optionally over a SSL/TLS connection. 
 // Sends an initial 'Register' message to Node-Red to request the JSON
 // configuration block used in initTopicMappings above.
 //
 void setup() {
   Serial.begin(115200);
+
+  memset( (void*)counters, 0, sizeof( unsigned int ) * MAX_COUNTERS );
 
   connectToWifi();
   Serial.println(WiFi.localIP());
@@ -280,6 +309,12 @@ void setup() {
   connectClient();
 
   OnewireBegin();
+
+  // Setup timer interrupt for counters
+  counterInterrupt = timerBegin( 0, TIMER_PRESCALER, true );
+  timerAttachInterrupt( counterInterrupt, &counterSampler, true );
+  timerAlarmWrite( counterInterrupt, 1000000, true );
+  timerAlarmEnable( counterInterrupt );
 
   mqtt.subscribe(PSTR("BSB/Configure"), [](const String & payload, const size_t size) {
     initTopicMappings(payload);

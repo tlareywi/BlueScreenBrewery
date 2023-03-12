@@ -46,6 +46,9 @@
 // Comment line below to disable Atlas sensor integration (pH, Dissolved O2) 
 #define MAX_ATLAS_SENSORS 6
 
+// Prescaler for the counter interrupt timer. 80 is appropraite for ESP32 boards.
+#define TIMER_PRESCALER 80
+
 // Comment line below to disable SSL/TLS. Only consider this for testing/prototyping.
 #define USE_SECURE_TCP
 

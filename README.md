@@ -165,7 +165,7 @@ These are the valid devices to be used in the configuration 'Type' field(s). Not
     - GPIO  - Required.
 
 
-* **Counter**     - Publishes 'pulses per second' from the associated GPIO pin. A common application is integration of digital flow meters.
+* **Counter**     - Publishes 'pulses per second' from the associated GPIO pin. A common application is integration of digital flow meters. Counters are limited to 12 per device.
     - Topic - Required. Payload is set to the integer number of pulses received in the last second.
     - GPIO  - Required.   
 
