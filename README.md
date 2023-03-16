@@ -165,7 +165,7 @@ These are the valid devices to be used in the configuration 'Type' field(s). Not
     - GPIO  - Required.
 
 
-* **Counter**     - Publishes 'pulses per second' from the associated GPIO pin. A common application is integration of digital flow meters. Counters are limited to 12 per device.
+* **Counter**     - Publishes 'pulses per second' from the associated GPIO pin at microsecond resolution. A common application is integration of digital flow meters. Counters are limited to 12 per device.
     - Topic - Required. Payload is set to the integer number of pulses received in the last second.
     - GPIO  - Required.   
 
@@ -201,3 +201,11 @@ These are the valid devices to be used in the configuration 'Type' field(s). Not
 
 # Next Steps
 Now it's just a matter of building Node-Red flows that match the needs of your brewery. Additional examples are available in this repository under NodeRed. These can be imported to provide starting points for integration of various device types and external services such as Brewfather. Reference the README in the NodeRed directory for additional documentation for the example flows. Happy brewing!
+
+# Troubleshooting
+
+## Arduino Serial Console
+If the firmware fails to register with Node-Red and the Interface flow is 'Connected' then the device may either be failing to connect to the MQTT broker or is not connected to the WiFi network. The [Arduino IDE](https://docs.arduino.cc/software/ide-v2) contains a serial console that will print early debug messages from the device. Ensure the device is connected via USB and the console is on the correct port. Upon boot, the firmware will print its IP address if it's able to connect to WiFi. If this doesn't happen then review your SSID and password settings in Config.h. Next, if there is any problem connecting to MQTT it will print a detailed error message. Usually, this is either the wrong IP address specified or an authentication issue. Again, review the settings in Config.h and the MQTT configuration steps earlier in this document.
+
+## Node-Red Debug Sidebar
+If Node-Red is receiving the register message from the device then any further diagnostic messages from the firmware are broadcast via the ```BSB/Console``` message. Assuming you've imported the ```Interface``` flow, these messages are already routing to the [Node-Red debug sidebar](https://nodered.org/docs/user-guide/editor/sidebar/debug). This is a good place to check for errors reported from bad device configuration JSON or failures to initialize sub-systems like OneWire or Bluetooth. You can also add Node-Red debug nodes to your flows to print the incomming MQTT messages from the firmware to see exactly what is being sent and how often.  

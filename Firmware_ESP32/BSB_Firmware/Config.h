@@ -31,10 +31,10 @@
 // Largest payload accepted. Needs to be large enough to accomodate the JSON configuration blobs.
 #define MAX_PAYLOAD_SIZE  1024 
 // Maximum number of 'publish' topics that can be defined (i.e. number of distinct sensor or pin reads)
-#define MAX_PUBLISH_TOPICS   24
+#define MAX_PUBLISH_TOPICS 24
 
-// PWM Options. The resolution is compatible with a common Anoalog Amplifer board. 
-#define PWM_RESOLUTION 8 // 0 - 255
+// PWM Options. The resolution is compatible with a common Analog Amplifer board. 
+#define PWM_RESOLUTION 8 // 2^8 -> [0 - 255]
 #define PWM_FREQUENCY  2000
 
 // Comment line below to disable one-wire temperature sensor (DS18B20) integration
@@ -48,6 +48,9 @@
 
 // Prescaler for the counter interrupt timer. 80 is appropraite for ESP32 boards.
 #define TIMER_PRESCALER 80
+
+// Pubished to MQTT at boot to identify the firmware version running on board.
+#define FW_VERSION PSTR(": Firmware Version 0.8")
 
 // Comment line below to disable SSL/TLS. Only consider this for testing/prototyping.
 #define USE_SECURE_TCP

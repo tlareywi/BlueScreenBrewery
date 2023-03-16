@@ -20,12 +20,8 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-///
-/// You may need to install these packages from the library manager in the Arduino IDE in order to build.
-/// Git repositories are provides in comments where helpful.
-///
-
 #include "Config.h"           // User configuration parameters
+#include "ISRs.h"             // Iterrrupt service routines for counters
 
 #include <time.h>             // Time functions to set currrent time for certificate validation
 
@@ -40,30 +36,10 @@ WiFiClient client;
 #include <ArduinoJson.h>      // JSON Parser
 #include <MQTTPubSubClient.h> // https://github.com/hideakitai/MQTTPubSubClient
 
-#define MAX_COUNTERS 12
-
 // Globals //////////////////////////////////////////////////////////////////////////////////
 const char consoleTopic[] = PSTR("BSB/Console");
 String deviceId( DEVICE_NAME );
 arduino::mqtt::PubSubClient<MAX_PAYLOAD_SIZE> mqtt;
-volatile unsigned int counters[MAX_COUNTERS];
-unsigned int counterSamples[MAX_COUNTERS];
-unsigned short nextISR = 0;
-void (*counterISRs[])(void) {
-  []{++counters[0];},
-  []{++counters[1];},
-  []{++counters[2];},
-  []{++counters[3];},
-  []{++counters[4];},
-  []{++counters[5];},
-  []{++counters[6];},
-  []{++counters[7];},
-  []{++counters[8];},
-  []{++counters[9];},
-  []{++counters[10];},
-  []{++counters[11];}
-};
-hw_timer_t *counterInterrupt = NULL;
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "OnewireSensor.h"    // OneWire temperature sensor support (optional see Config.h)
@@ -75,6 +51,8 @@ static std::function<void()> publishTopics[MAX_PUBLISH_TOPICS];
 static unsigned short numPublishTopics = 0;
 static unsigned short numPWMChannels = 0;
 static const int MaxPWMDutyCycke = (int)(pow(2, PWM_RESOLUTION) - 1);
+static unsigned short nextISR = 0;
+static hw_timer_t *counterInterrupt = NULL;
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 //
@@ -136,17 +114,18 @@ void initTopicMappings( const String& payload ) {
   JsonArray arr = itr->value().as<JsonArray>();
   numPublishTopics = 0;
   numPWMChannels = 0;
+  nextISR = 0;
 
-  for ( JsonObject mapping : arr ) {
+  for( JsonObject mapping : arr ) {
     String type = mapping[PSTR("Type")];
     String topic = mapping[PSTR("Topic")];
 
-    if ( numPublishTopics == MAX_PUBLISH_TOPICS ) {
+    if( numPublishTopics == MAX_PUBLISH_TOPICS ) {
       mqtt.publish( consoleTopic, deviceId + PSTR(": Exceeded max number of topics in configuration!") );
       break;
     }
 
-    if ( type == PSTR("Digital-Out") ) {
+    if( type == PSTR("Digital-Out") ) {
       unsigned int GPIO = mapping[PSTR("GPIO")];
       bool activeLow = mapping[PSTR("Active-Low")];
       pinMode(GPIO, OUTPUT);
@@ -162,7 +141,7 @@ void initTopicMappings( const String& payload ) {
           digitalWrite(GPIO, activeLow ? HIGH : LOW );
       });
     }
-    else if ( type == PSTR("PWM") ) {
+    else if( type == PSTR("PWM") ) {
       unsigned int GPIO = mapping[PSTR("GPIO")];
       unsigned int channel = numPWMChannels++;
       pinMode(GPIO, OUTPUT);
@@ -175,7 +154,7 @@ void initTopicMappings( const String& payload ) {
           ledcWrite(channel, payload.toInt());
       });
     }
-    else if ( type == PSTR("Analog-In") ) {
+    else if( type == PSTR("Analog-In") ) {
       unsigned int GPIO = mapping[PSTR("GPIO")];
       pinMode(GPIO, INPUT);
 
@@ -188,7 +167,7 @@ void initTopicMappings( const String& payload ) {
         }
       };
     }
-    else if ( type == PSTR("Digital-In") ) {
+    else if( type == PSTR("Digital-In") ) {
       unsigned int GPIO = mapping[PSTR("GPIO")];
       pinMode(GPIO, INPUT);
 
@@ -201,7 +180,7 @@ void initTopicMappings( const String& payload ) {
         }
       };
     }
-    else if ( type == PSTR("Counter") ) {
+    else if( type == PSTR("Counter") ) {
       unsigned int GPIO = mapping[PSTR("GPIO")];
       unsigned short isr = nextISR++;
       if( isr >= MAX_COUNTERS )
@@ -213,14 +192,13 @@ void initTopicMappings( const String& payload ) {
       attachInterrupt( digitalPinToInterrupt(GPIO), counterISRs[isr], FALLING );
 
       publishTopics[numPublishTopics++] = [counterSamples, isr, topic]() {
-        static unsigned int clk = millis();
-        if ( millis() - clk > 750 ) {
+        if( counterSamples[isr] ) {
           mqtt.publish(topic, String(counterSamples[isr]));
-          clk = millis();
+          counterSamples[isr] = 0;
         }
       };
     }
-    else if ( type == PSTR("Onewire") ) {
+    else if( type == PSTR("Onewire") ) {
       unsigned int index = mapping[PSTR("Index")];
       
       publishTopics[numPublishTopics++] = [index, topic]() {
@@ -232,7 +210,7 @@ void initTopicMappings( const String& payload ) {
         }
       };
     }
-    else if ( type == PSTR("Atlas") ) {
+    else if( type == PSTR("Atlas") ) {
       unsigned short rx = mapping[PSTR("Rx")];
       unsigned short tx = mapping[PSTR("Tx")];
       String commandTopic = mapping[PSTR("Command")];
@@ -244,7 +222,7 @@ void initTopicMappings( const String& payload ) {
           mqtt.publish(topic, data);
       };
     }
-    else if ( type == PSTR("Tilt") ) {
+    else if( type == PSTR("Tilt") ) {
       unsigned int index = mapping[PSTR("Index")];
       BTInit(); // NOOP if ENABLE_TILT_SENSORS is not defined.
 
@@ -276,15 +254,6 @@ void initTopicMappings( const String& payload ) {
 }
 
 //
-// Called 'exactly' every second to update counters via timer interrupt.
-//
-void counterSampler()
-{
-  memcpy( counterSamples, (void*)counters, sizeof( unsigned int ) * MAX_COUNTERS );
-  memset( (void*)counters, 0, sizeof( unsigned int ) * MAX_COUNTERS );
-}
-
-//
 // Connect to WiFi and MQTT broker, optionally over a SSL/TLS connection. 
 // Sends an initial 'Register' message to Node-Red to request the JSON
 // configuration block used in initTopicMappings above.
@@ -293,6 +262,7 @@ void setup() {
   Serial.begin(115200);
 
   memset( (void*)counters, 0, sizeof( unsigned int ) * MAX_COUNTERS );
+  memset( counterSamples, 0, sizeof( unsigned int ) * MAX_COUNTERS );
 
   connectToWifi();
   Serial.println(WiFi.localIP());
@@ -320,6 +290,7 @@ void setup() {
     initTopicMappings(payload);
   });
 
+  mqtt.publish( consoleTopic, deviceId + FW_VERSION );
   mqtt.publish(PSTR("BSB/Register"), DEVICE_NAME);
 }
 
@@ -337,7 +308,8 @@ void loop() {
     connectClient();
   }
   
-  static unsigned int onLineTimer = millis();
+  static unsigned long onLineTimer = millis();
+  static unsigned long profiler = millis();
   if( millis() - onLineTimer > 3000 ) {
     mqtt.publish(PSTR("BSB/Online"), DEVICE_NAME);
     onLineTimer = millis();
@@ -347,7 +319,6 @@ void loop() {
 
   mqtt.update();
 
-  for( unsigned short i = 0; i < numPublishTopics; ++i ) {
+  for( unsigned short i = 0; i < numPublishTopics; ++i )
       publishTopics[i]();
-  }
 }
