@@ -12,14 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Intended to be used with Blue-Screen-Brewing⟨™⟩'s set of Node-Red nodes and flows for brewery automation.
-// Simply edit the values in Config.h appropriately for your network and MQTT configuration.
-// This Sketch has been developed and tested on a dual core ESP32-WROOM-UE32 board. Most other ESP32 boards will likely work.
-// Other types of Arduino boards will almost certainly require modifications to the Sketch, as WiFi and Bluetooth libraries 
-// tend to be hardware specific.
-//
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 #include "Config.h"           // User configuration parameters
 #include "ISRs.h"             // Iterrrupt service routines for counters
 
