@@ -45,11 +45,15 @@ Many tutorials on running Mosquitto on a local network use username/password aut
 * On the Node-Red/MQTT machine, download this script [generate-CA.sh](https://github.com/owntracks/tools/tree/master/TLS).
 * generate-CA.sh without any arguments will generate the server certificates. Place them in /etc/mosquitto/certs.
 * Run ```chmown -R mosquitto /etc/mosquitto/certs``` to ensure Mosquito can read the files.
-* Edit /etc/mosquitto/conf.d/default.conf to point at the cert files and enable required certificates. An example is provided in this repo under Mosquitto.
+* Replace /etc/mosquitto/conf.d/default.conf with the example in this repo at Mosquitto/default.conf. Edit this file to point at the cert files you've created.
 * Restart Mosquitto using ```sudo service mosquitto restart```
 * Generate the client certs by running ```generate-CA.sh client [name]```. Name can be anything but it must not be empty.
 * ```ca.crt```, ```[name].key``` and ```[name].crt``` are needed for both Node-Red's MQTT configuration and the BSB firmware. More on this later.
     - Never share the crt or key files.
+
+## Configure Mosquitto without Secure Authentication
+* If *not* using SSL/TLS as described above, replace /etc/mosquitto/conf.d/default.conf with Mosquitto/no_security.conf in htis repo (rename it to default.conf).
+* Restart Mosquitto using ```sudo service mosquitto restart```
 
 ## Building the BSB Firmware
 The firmware has only been tested on an ESP32 board and the 'helper' script referenced below assumes such a device.
