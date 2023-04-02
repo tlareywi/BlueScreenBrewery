@@ -51,7 +51,7 @@ static hw_timer_t *counterInterrupt = NULL;
 // Set internal clock on device.
 //
 void setClock() {
-  configTime(3 * 3600, 0, PSTR("pool.ntp.org"), PSTR("time.nist.gov"));
+  configTime(0, 0, PSTR("pool.ntp.org"), PSTR("time.nist.gov"));
 }
 
 //
@@ -301,7 +301,6 @@ void loop() {
   }
   
   static unsigned long onLineTimer = millis();
-  static unsigned long profiler = millis();
   if( millis() - onLineTimer > 3000 ) {
     mqtt.publish(PSTR("BSB/Online"), DEVICE_NAME);
     onLineTimer = millis();

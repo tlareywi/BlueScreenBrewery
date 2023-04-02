@@ -8,10 +8,7 @@ A sophisticated system for brewery automation built around [Node-Red](https://no
 * Tilt sensors
 * Onewire temperature sensors
 * Atlas Scientific EZO sensors (pH and DO2)
-* BrewFather via 3rd party contributor to Node-Red
-
-## Development Status
-Still in the early stages of development. Supported devices, interfaces and various other aspects of the code are open to change as new requirements are discovered, feedback from other users is considered, etc. Key components levergaged, such as Node-Red and Mosquitto, are already stable but the firmware was a ground up effort and almost certainly contains bugs and/or unexpected behavior. However, I'm using it in my own brewery which contains flow meters, SSRs (AC burners), Onewire sensors, Tilt devices, several DC pumps, Altas sensors and Brewfather integration so most devices have some degree of testing. I'm continuing to make fixes and tweaks as I use the software and receive user feedback. For hazardous devices such as burners, I strongly recommend hardware kill switches are installed to override unexpected behavior.    
+* BrewFather via 3rd party contributor to Node-Red   
 
 ## Architecture
 The center of the system is the Node-Red instance running on any supported platform; Windows, MacOS, Rasp-Pi, Azure cloud, etc. The MQTT broker is generally, but not necessarily, installed on the same machine. Node-Red communicates with any number of Arduino boards (ESP32) via MQTT to controll attached devices, read from sensors, etc. The firmware is common between all Arduino devices and configured dynamically via messages from Node-Red. More on this in the details below.
@@ -23,123 +20,18 @@ A browser based UI is generated via use of Node-Red Deshboard nodes within the f
 
 ![BSB UI](screen_captures/BSBHotSide.png)
 
+## Development Status
+Still in the early stages of development. Supported devices, interfaces and various other aspects of the code are open to change as new requirements are discovered, feedback from other users is considered, etc. Key components levergaged, such as Node-Red and Mosquitto, are already stable but the firmware was a ground up effort and almost certainly contains bugs and/or unexpected behavior. However, I'm using it in my own brewery which contains flow meters, SSRs (AC burners), Onewire sensors, Tilt devices, several DC pumps, Altas sensors and Brewfather integration so most devices have some degree of testing. I'm continuing to make fixes and tweaks as I use the software and receive user feedback. For hazardous devices such as burners, I strongly recommend hardware kill switches are installed to override unexpected behavior. 
+
 # Installation
-The steps below present the high level steps. Each step is covered in further detail in proceeding sections. In addition to the machine running Node-Red and MQTT, any number of Arduino ESP32 boards are needed to run the BSB firmware and integrate the actual hardware devices in the brewery; e.g. pumps, SSRs, etc. This document does not cover building a hardware control panel; just the software/firmware side is considerded.
+The recommmended option for installation is to run a pre-configured Docker image. Watch the [quick-start video](https://www.youtube.com/watch?v=PL1thxe_Kj0) for a walk-through of the entire setup process including builing the firmware targetting ESP32 board(s). The Docker image can run on any platform supporting Docker; pretty much anything down to a Rasp Pi. If for some reason you wish to run Node-Red and MQTT natively, there are [additional instructions](README_Native.md). 
 
-* Install Node-Red and an MQTT broker on a supported machine. We'll cover Raspberry Pi below but it could be Windows, Mac or even in the cloud.
-* Configure MQTT to use SSL/TLS. Technically optional, but secures communication between Node-Red and your Arduino controllers.
-* Build the BSB firmware and burn to all desired Arduino boards.
-* Configure Arduino controllers (i.e. assign functions to pins) via JSON in Node-Red.
-* Build Node-Red flows to run your brewery and make beer!
+### Installation Issues (not covered in quick-start)
+* Configure your network to assign the same IP (static IP or DHCP reservation) to the machine Docker, or the native MQTT broker, is running on. This IP is 'burned' into the firmware during set-up and the devices will be unable to connect if the IP changes.
+* Certificate authentication is used for devices connecting to the MQTT broker. These will expire in late 2032 and you'll need to re-create the certs and update the firmware to match. Since there will likely be many other reasons to update the firmware prior to this, it does not seem like a practical limitation.
 
-## Raspberry Pi System with Node-Red and Mosquitto (MQTT)
-
-* Follow the instuctions for installing [Ubuntu-Server](https://ubuntu.com/tutorials/how-to-install-ubuntu-on-your-raspberry-pi#1-overview) using the RaspPi Imager.
-* Next, perform the steps here for installing [Node-Red](https://nodered.org/docs/getting-started/raspberrypi)
-* Run ```sudo apt install mosquitto mosquitto-clients``` to install the Mosquitto MQTT broker.
-* Run ```sudo systemctl enable mosquitto``` to automatically run Mosquitto on system restart.
-
-## Configure and Secure Mosquitto (recommended)
-Many tutorials on running Mosquitto on a local network use username/password authentication 'in the open'. While this may be low'ish risk for a private network, most would prefer not to have authentication params flying around wirelessly in plain text. The steps below configure MQTT to use certificate authentication and TLS encryption. If this is configured, then you must also copy the certs into the firmware configuration file when building (more on this later). Node-Red also needs to have the cert files but this is relaively trivial to configure. 
-
-* On the Node-Red/MQTT machine, download this script [generate-CA.sh](https://github.com/owntracks/tools/tree/master/TLS).
-* generate-CA.sh without any arguments will generate the server certificates. Place them in /etc/mosquitto/certs.
-* Run ```chmown -R mosquitto /etc/mosquitto/certs``` to ensure Mosquito can read the files.
-* Edit /etc/mosquitto/conf.d/default.conf to point at the cert files and enable required certificates. An example is provided in this repo under Mosquitto.
-* Restart Mosquitto using ```sudo service mosquitto restart```
-* Generate the client certs by running ```generate-CA.sh client [name]```. Name can be anything but it must not be empty.
-* ```ca.crt```, ```[name].key``` and ```[name].crt``` are needed for both Node-Red's MQTT configuration and the BSB firmware. More on this later.
-    - Never share the crt or key files.
-
-## Building the BSB Firmware
-The firmware has only been tested on an ESP32 board and the 'helper' script referenced below assumes such a device.
-
-* Download arduino-cli from https://arduino.github.io/arduino-cli/0.20/installation/
-* On the command line, navigate to Firmware_ESP32 and copy arduino-cli here
-* Edit the following values in Firmware_ESP32/Config.h.
-    - DEVICE_NAME to uniquely identify the ESP32 board.
-    - WiFi name and password.
-    - If secure MQTT is used, the content of the cert files created above can simply be pasted into the matching char arrays.
-* Run `arduino-cli board list` with the board plugged in and unplugged to determine the port.
-* On Windows, edit build.bat to set the port and then run built.bat from within Firmware_ESP32
-* For other operating systems, use build.bat as a reference for what commands to run.
-
-## Configuring Node-Red and Talking to the Firmware
-
-* Open a browser and navigate to the IP address of your Node-Red instance on port 1880; i.e. http://192.168.0.10:1880.
-* Import the Node-Red flow called Interfaces.json under NodeRed in this repository (ctrl-i). It should appear as below.
-
-![BSB Config](screen_captures/configuration.png)
-
-This flow handles three MQTT messages published by the BSB firmware; Console, Register and Online. The Console message will contain error and diagnostic information printed to Node-Red's debug console. Register is sent by the firmware at boot and Online is sent every 3 seconds to indecate the interface is live. This flow handles 4 interfaces to demonstrate how to configure multiple ESP32 boards. For now, lets configure just one. 
-
-* Double click the yellow 'Hot Side' sswitch node and rename it to match your DEVICE_NAME set in Config.h.
-* Click the ellipse ```...``` under Rules and change the label ```Hot Side``` to match DEVICE_NAME as well.
-    - For now, leave the JSON as is. This is discussed later.
-* Commit those changes and double click the ```Which Device?``` node, replacing ```Hot Side``` with DEVICE_NAME.
-* Do the same step for the ```Online``` node.
-* Finally, change the name of the orange timer node ```Hot Side``` to match DEVICE_NAME for cleanliness.
-
-If using secure MQTTT, follow the additional steps below.
-
-* Double click one of the MQTT message nodes in the flow.
-* Click the pencil icon next to the Server field.
-* Click the pencil icon netx to TLS Configuration.
-* Enter the paths of your ```client``` ca.cert, key and crt files.
-
-Now click the red ```deploy``` button to publish the changes. Assuming MQTT is configured correctly, the purple MQTT nodes should show a connected state. If not, double click one of them and review the settings. Apply power to your ESP32 interface that's running the BSB firmware. Within a few seconds, the orange timer node you configured should show a green state and begin counting down from 5 while resetting every 3 seconds. You can further customize this flow to match the number of devices you'll actually be using. 
-
-Lastly, navigate to your Node-Red instance's Dashbaord by appendding ```/ui``` to the address; e.g. ```http://192.168.0.10:1880/ui```. You should see an Interfaces tab reflecting the online state of your ESP32 baord. Congrats, you have a working Blue Screen Brewery platform! Next, we'll cover how to configure the interface using the JSON in the yellow switch node we edited above.
-
-## Firmware Configuration
-When the BSB firmware boots, it sends the MQTT message 'BSB/Register'. Node-Red listens for this event and responds with 'BSB/Configure' which contains JSON describing the device types and mappings between MQTT messages and Arduino pin state. For example, suppose Config.h is edited so the DEVICE_NAME is 'Cold Side'. When this device boots, it will send the 'BSB/Register' message with the payload 'Cold Side'. Node-Red receives this message and chooses the JSON to send based on the device name payload. Node-Red sends  the 'BSB/Configure' message with the following JSON payload, which defines two Onewire sensors, two DC heating pads, two DC pumps and two Tilt sensors. The Topic field defines the MQTT message name to bind the device. The meaning of Index depends on the device type, both of which are documented below. It's important the label, in this case 'Cold Side', matches the DEVICE_NAME in Config.h or the configuration will be ignored. This facilitates many devices running in parallel without stepping on each other. 
-
-```javascript
-{
-    "Cold Side": [
-        {
-            "Topic": "BSB/Unitank-1-Temp",
-            "Index": 1,
-            "Type": "Onewire"
-        },
-        {
-            "Topic": "BSB/Unitank-2-Temp",
-            "Index": 0,
-            "Type": "Onewire"
-        },
-        {
-            "Topic": "BSB/Unitank-1-Heat",
-            "GPIO": 27,
-            "Type": "Digital-Out"
-        },
-        {
-            "Topic": "BSB/Unitank-2-Heat",
-            "GPIO": 15,
-            "Type": "Digital-Out"
-        },
-        {
-            "Topic": "BSB/Unitank-1-Cool",
-            "GPIO": 25,
-            "Type": "Digital-Out"
-        },
-        {
-            "Topic": "BSB/Unitank-2-Cool",
-            "GPIO": 14,
-            "Type": "Digital-Out"
-        },
-        {
-            "Topic": "BSB/Blue-Tilt",
-            "Index": 5,
-            "Type": "Tilt"
-        },
-        {
-            "Topic": "BSB/Purple-Tilt",
-            "Index": 3,
-            "Type": "Tilt"
-        }
-    ]
-}
-```
+## Configuration
+In Node-Red, navigate to the Interfaces tab and double click either the ```Hot Side Configuration``` or ```Cold Side Configuration``` nodes. Example JSON is provided in each which defines the mapping of MQTT messages to/from pins and the pin function. Each device type and its arguments is documented below. See the quick-start video for further detail. 
 
 ## Device Types
 These are the valid devices to be used in the configuration 'Type' field(s). Note, the 'Topic' field is always required and denotes the MQTT messsage that will be subscribed to or published on depending on the type. For example, type Digital-In will publish to the Topic while type Digital-Out will subscribe to the Topic. 
@@ -198,9 +90,6 @@ These are the valid devices to be used in the configuration 'Type' field(s). Not
 | 5                                         | Blue                                       |
 | 6                                         | Yellow                                     |
 | 7                                         | Pink                                       |
-
-# Next Steps
-Now it's just a matter of building Node-Red flows that match the needs of your brewery. Additional examples are available in this repository under NodeRed. These can be imported to provide starting points for integration of various device types and external services such as Brewfather. Reference the README in the NodeRed directory for additional documentation for the example flows. Happy brewing!
 
 # Troubleshooting
 
