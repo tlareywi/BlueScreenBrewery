@@ -28,6 +28,8 @@ The recommmended option for installation is to run a pre-configured Docker image
 
 ### Installation Issues (not covered in quick-start)
 * Configure your network to assign the same IP (static IP or DHCP reservation) to the machine Docker, or the native MQTT broker, is running on. This IP is 'burned' into the firmware during set-up and the devices will be unable to connect if the IP changes.
+* The default password is ```password``` during the quick-start process. Use this whenever prompted.
+* For the first run of Node-Red the username is ```bsb``` and the password is ```password```.
 * Certificate authentication is used for devices connecting to the MQTT broker. These will expire in late 2032 and you'll need to re-create the certs and update the firmware to match. Since there will likely be many other reasons to update the firmware prior to this, it does not seem like a practical limitation.
 
 ## Configuration
