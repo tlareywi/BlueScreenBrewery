@@ -41,6 +41,9 @@ arduino::mqtt::PubSubClient<MAX_PAYLOAD_SIZE> mqtt;
 // File scope ///////////////////////////////////////////////////////////////////////////////
 static std::function<void()> publishTopics[MAX_PUBLISH_TOPICS];
 static unsigned short numPublishTopics = 0;
+static String subscribeTopicStrings[MAX_SUBSCRIBE_TOPICS];
+static std::function<void(const String&, const size_t)> subscribeTopics[MAX_SUBSCRIBE_TOPICS];
+static unsigned short numSubscribeTopics = 0;
 static unsigned short numPWMChannels = 0;
 static const int MaxPWMDutyCycke = (int)(pow(2, PWM_RESOLUTION) - 1);
 static unsigned short nextISR = 0;
@@ -69,7 +72,7 @@ void connectToWifi() {
 //
 // Connects to MQTT broker.
 //
-void connectClient() {
+void connectClient( bool clean ) {
   client.connect(MQTT_HOST, MQTT_PORT);
   if ( !client.connected() ) {
 #ifdef USE_SECURE_TCP
@@ -80,7 +83,17 @@ void connectClient() {
   }
 
   mqtt.begin(client);
+  mqtt.setCleanSession( clean );
   mqtt.connect(DEVICE_NAME);
+
+  mqtt.subscribe(PSTR("BSB/Configure"), [](const String & payload, const size_t size) {
+    initTopicMappings(payload);
+  });
+
+  if( !clean ) { // Resubscribe to topics if we're reconnecting.
+    for( unsigned short i = 0; i < numSubscribeTopics; ++i )
+      mqtt.subscribe(subscribeTopicStrings[i], subscribeTopics[i]);
+  }
 }
 
 //
@@ -105,6 +118,7 @@ void initTopicMappings( const String& payload ) {
 
   JsonArray arr = itr->value().as<JsonArray>();
   numPublishTopics = 0;
+  numSubscribeTopics = 0;
   numPWMChannels = 0;
   nextISR = 0;
 
@@ -113,7 +127,11 @@ void initTopicMappings( const String& payload ) {
     String topic = mapping[PSTR("Topic")];
 
     if( numPublishTopics == MAX_PUBLISH_TOPICS ) {
-      mqtt.publish( consoleTopic, deviceId + PSTR(": Exceeded max number of topics in configuration!") );
+      mqtt.publish( consoleTopic, deviceId + PSTR(": Exceeded max number of published topics in configuration!") );
+      break;
+    }
+    if( numSubscribeTopics == MAX_SUBSCRIBE_TOPICS ) {
+      mqtt.publish( consoleTopic, deviceId + PSTR(": Exceeded max number of subscribed topics in configuration!") );
       break;
     }
 
@@ -125,13 +143,16 @@ void initTopicMappings( const String& payload ) {
         digitalWrite(GPIO, HIGH);
       else
         digitalWrite(GPIO, LOW);
-      
-      mqtt.subscribe(topic, [GPIO, activeLow](const String & payload, const size_t size) {
+
+      subscribeTopics[numSubscribeTopics] = [GPIO, activeLow](const String & payload, const size_t size) {
         if ( payload.toInt() )
           digitalWrite(GPIO, activeLow ? LOW : HIGH );
         else 
           digitalWrite(GPIO, activeLow ? HIGH : LOW );
-      });
+      };
+      
+      subscribeTopicStrings[numSubscribeTopics] = topic;
+      mqtt.subscribe(topic, subscribeTopics[numSubscribeTopics++]);
     }
     else if( type == PSTR("PWM") ) {
       unsigned int GPIO = mapping[PSTR("GPIO")];
@@ -140,11 +161,14 @@ void initTopicMappings( const String& payload ) {
       ledcSetup(channel, PWM_FREQUENCY, PWM_RESOLUTION);
       ledcAttachPin(GPIO, channel);
       
-      mqtt.subscribe(topic, [channel](const String & payload, const size_t size) {
+      subscribeTopics[numSubscribeTopics] = [channel](const String & payload, const size_t size) {
         int dutyCyle = payload.toInt();
         if( dutyCyle > -1 && dutyCyle <= MaxPWMDutyCycke )
           ledcWrite(channel, payload.toInt());
-      });
+      };
+
+      subscribeTopicStrings[numSubscribeTopics] = topic;
+      mqtt.subscribe(topic, subscribeTopics[numSubscribeTopics++]);
     }
     else if( type == PSTR("Analog-In") ) {
       unsigned int GPIO = mapping[PSTR("GPIO")];
@@ -239,10 +263,14 @@ void initTopicMappings( const String& payload ) {
       };
     }
     else {
-      publishTopics[numPublishTopics++] = [](){};
       mqtt.publish( consoleTopic, deviceId + PSTR(": Unknown 'type', ") + type + PSTR(" in configuration.") );
     }
   }
+}
+
+void stopAll() { // Emergency stop of devices on lost broker connection.
+  for( unsigned short i = 0; i < numSubscribeTopics; ++i )
+      subscribeTopics[i]( String(PSTR("0")), 1 );
 }
 
 //
@@ -268,7 +296,7 @@ void setup() {
   client.setPrivateKey(client_key);
 #endif
 
-  connectClient();
+  connectClient( true /* clean session */  );
 
   OnewireBegin();
 
@@ -277,10 +305,6 @@ void setup() {
   timerAttachInterrupt( counterInterrupt, &counterSampler, true );
   timerAlarmWrite( counterInterrupt, 1000000, true );
   timerAlarmEnable( counterInterrupt );
-
-  mqtt.subscribe(PSTR("BSB/Configure"), [](const String & payload, const size_t size) {
-    initTopicMappings(payload);
-  });
 
   mqtt.publish( consoleTopic, deviceId + FW_VERSION );
   mqtt.publish(PSTR("BSB/Register"), DEVICE_NAME);
@@ -292,24 +316,28 @@ void setup() {
 // Keep checking for a lost connection and reestablish if needed.
 //
 void loop() {
+  static unsigned long onLineTimer = millis();
+
   if( WiFi.status() != WL_CONNECTED ) {
+    stopAll();
     connectToWifi();
-    connectClient();
+    connectClient( false /* clean session */ );
   }
   else if( !client.connected() ) {
-    connectClient();
+    stopAll();
+    connectClient( false /* clean session */ );
   }
-  
-  static unsigned long onLineTimer = millis();
-  if( millis() - onLineTimer > 3000 ) {
-    mqtt.publish(PSTR("BSB/Online"), DEVICE_NAME);
-    onLineTimer = millis();
+  else {
+    if( millis() - onLineTimer > 3000 ) {
+      mqtt.publish(PSTR("BSB/Online"), DEVICE_NAME);
+      onLineTimer = millis();
+    }
+      
+    OnewirePoll();
+
+    mqtt.update();
+
+    for( unsigned short i = 0; i < numPublishTopics; ++i )
+        publishTopics[i]();
   }
-    
-  OnewirePoll();
-
-  mqtt.update();
-
-  for( unsigned short i = 0; i < numPublishTopics; ++i )
-      publishTopics[i]();
 }

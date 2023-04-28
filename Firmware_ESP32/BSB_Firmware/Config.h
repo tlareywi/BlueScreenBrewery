@@ -32,6 +32,8 @@
 #define MAX_PAYLOAD_SIZE  1024 
 // Maximum number of 'publish' topics that can be defined (i.e. number of distinct sensor or pin reads)
 #define MAX_PUBLISH_TOPICS 24
+// Maximum number of 'subscribe' topics that can be defined
+#define MAX_SUBSCRIBE_TOPICS 24
 
 // PWM Options. The resolution is compatible with a common Analog Amplifer board. 
 #define PWM_RESOLUTION 8 // 2^8 -> [0 - 255]
@@ -50,7 +52,7 @@
 #define TIMER_PRESCALER 80
 
 // Pubished to MQTT at boot to identify the firmware version running on board.
-#define FW_VERSION PSTR(": Firmware Version 0.8")
+#define FW_VERSION PSTR(": Firmware Version 0.9")
 
 // Comment line below to disable SSL/TLS. Only consider this for testing/prototyping.
 #define USE_SECURE_TCP
